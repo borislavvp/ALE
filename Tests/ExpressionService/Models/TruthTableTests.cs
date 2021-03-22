@@ -27,5 +27,14 @@ namespace Tests.ExpressionService.Models
            var loops = QuineMcCluskeySolver.QMC_Solve(list, new int[] { });
 
         }
+
+        [Test]
+        public void test()
+        {
+            int res = (int)Math.Log2(2);
+            string asd = "213";
+            var asd2 = new string(asd);
+
+        }
     }
 }

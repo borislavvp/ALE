@@ -34,7 +34,7 @@ namespace Tests.ExpressionService.Models
             Tuple<TruthTable, TruthTableValues> response;
 
             TruthTableValues values = DEFAULT_VALUES;
-            values.Add("RESULT", new List<string>() { "0", "1", "1", "1", "0", "1", "0", "0", "0", "1", "0", "1", "1", "1", "0", "1" });
+            values.Add("RESULT", new List<string>() { "0", "1", "1", "1", "0", "1", "0", "1", "1", "1", "0", "1", "1", "1", "0", "1" });
             TruthTable table = new TruthTable(_mockTree.Object, values);
 
             TruthTableValues expected_values = GetValuesWithoutPositiveResults(values);
