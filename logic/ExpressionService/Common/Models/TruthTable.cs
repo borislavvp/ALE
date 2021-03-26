@@ -1,5 +1,6 @@
 ﻿using logic.ExpressionService.Common.Extensions;
 using logic.ExpressionService.Common.Interfaces;
+using logic.ExpressionService.Common.QMC;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,10 +47,35 @@ namespace logic.ExpressionService.Common.Models
             }
             return list;
         }
+
         public TruthTableValues Simplify()
         {
-            return QuineMcCluskey.Simplify(this.Value);
-        }
+            /* Get a clone version of the table that is going to be simplified */
+            var Simplified = this.Value.Clone() as TruthTableValues;
 
+            /* CalculatePrimeImplicants the prime implicant values with the QuineMcCluskey algorithm*/
+            var primeImplicants = QuineMcCluskey.CalculatePrimeImplicants(this.Value);
+
+            /* Get the number of rows so we can iterate through them and remove the positive results from the table */
+            int numberOfRows = Simplified.First().Value.Count();
+
+            /* Remove the positive resulte from the table */
+            for (int i = 0; i < numberOfRows; i++)
+            {
+                Simplified.DeleteRowValues(i - (numberOfRows - Simplified.First().Value.Count));
+            }
+
+            /* Fill the prime implicant values into the table*/
+            foreach (var res in primeImplicants)
+            {
+                Simplified[Simplified.Keys.Last()].Add("1");
+                for (int i = 0; i < res.RowData.Length; i++)
+                {
+                    Simplified.ElementAt(i).Value.Add(res.RowData[i].ToString());
+                }
+            }
+
+            return Simplified;
+        }
     }
 }

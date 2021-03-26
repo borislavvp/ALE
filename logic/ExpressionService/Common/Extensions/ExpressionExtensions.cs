@@ -97,7 +97,7 @@ namespace logic.ExpressionService.Common.Extensions
                 .EvaluateTruthTable(tree, infixNotation, rows);
         }
 
-        private static TruthTableValues FillTruthTableVariablesValues(List<INode> leafs, int rows)
+        public static TruthTableValues FillTruthTableVariablesValues(List<INode> leafs, int rows)
         {
             TruthTableValues tableValues = new TruthTableValues();
             foreach (INode leaf in leafs)
