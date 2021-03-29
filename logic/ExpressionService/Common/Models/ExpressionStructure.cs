@@ -6,7 +6,7 @@ using System.Text;
 
 namespace logic.ExpressionService.Common.Models
 {
-    public class ExpressionStructure
+    public class ExpressionStructure : IExpressionStructure
     {
         public IPrefixExpression PrefixExpression { get; set; }
         public IBinaryExpressionTree ExpressionTree { get; set; }
