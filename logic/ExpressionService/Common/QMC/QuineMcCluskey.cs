@@ -12,7 +12,7 @@ namespace logic.ExpressionService.Common.QMC
 {
     public static class QuineMcCluskey
     {
-        private static readonly char DONT_CARE = 'X';
+        public static readonly char DONT_CARE = 'X';
         /// <summary>
         /// Function that evaluates whether a number is produced by multiplying 2 by 2 n number of times
         /// </summary>

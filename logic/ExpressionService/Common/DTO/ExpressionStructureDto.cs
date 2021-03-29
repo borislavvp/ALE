@@ -1,15 +1,21 @@
 ﻿using logic.ExpressionService.Common.Interfaces;
 using logic.ExpressionService.Common.Models;
+using logic.ExpressionService.Common.QMC;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace logic.ExpressionService.Common.DTO
 {
-    public class ExpressionStructureDto
+    public sealed class SimplifiedTruthTableValues
+    {
+        public TruthTableValues Values { get; set; }
+        public char DontCareCharacter { get; set; }
+    }
+    public sealed class ExpressionStructureDto
     {
         public TruthTableValues TruthTable { get; set; }
-        public TruthTableValues SimplifiedTruthTable { get; set; }
+        public SimplifiedTruthTableValues SimplifiedTruthTable { get; set; }
         public string HexResult { get; set; }
         public List<INode> Nodes { get; set; }
         public List<IEdge> Edges { get; set; }
@@ -19,7 +25,11 @@ namespace logic.ExpressionService.Common.DTO
         public ExpressionStructureDto(ExpressionStructure structure)
         {
             this.TruthTable = structure.TruthTable.Value;
-            this.SimplifiedTruthTable = structure.TruthTable.Simplify();
+            this.SimplifiedTruthTable = new SimplifiedTruthTableValues
+            {
+                Values = structure.TruthTable.SimplifiedValue,
+                DontCareCharacter = QuineMcCluskey.DONT_CARE
+            };
             this.HexResult = structure.TruthTable.HexResult;
             this.Nodes = structure.ExpressionTree.GetNodes();
             this.Edges = structure.ExpressionTree.GetEdges();
