@@ -8,7 +8,7 @@ namespace logic.ExpressionService.Common.Extensions
 {
     public static class HelperExtensions
     {
-        public static bool isOperator(this char value)
+        public static bool IsOperator(this char value)
         {
             return ((char)Operators.Biimplication).Equals(value) ||
                     ((char)Operators.Implication).Equals(value) ||
@@ -22,7 +22,7 @@ namespace logic.ExpressionService.Common.Extensions
             return Convert.ToBoolean(value);
         }
 
-        public static List<INode> countSortLeafs(List<INode> arr)
+        public static List<INode> CountSortNodes(List<INode> arr)
         {
             int n = arr.Count;
             int A = 'A';

@@ -22,7 +22,7 @@ namespace logic.ExpressionService.Common.Extensions
             {
                 char c = parsed.Value[i];
 
-                if (c.isOperator())
+                if (c.IsOperator())
                 {
                     if (((char)Operators.Negation).Equals(c))
                     {
@@ -61,13 +61,13 @@ namespace logic.ExpressionService.Common.Extensions
             return nodes;
         }
 
-        private static BinaryExpressionTree buildPrefixTree(this Queue<char> expressionValues, int identation)
+        private static IBinaryExpressionTree buildPrefixTree(this Queue<char> expressionValues, int identation)
         {
             if (expressionValues.Count <= 0) return null;
 
             char value = expressionValues.Dequeue();
 
-            if (!value.isOperator())
+            if (!value.IsOperator())
             {
                 return new BinaryExpressionTree(new Node(value, identation, true));
             }
@@ -84,107 +84,10 @@ namespace logic.ExpressionService.Common.Extensions
             }
         }
 
-        public static BinaryExpressionTree BuildExpressionTree<T>(this T expression) where T : IExpression
+        public static IBinaryExpressionTree BuildExpressionTree<T>(this T expression) where T : IExpression
         {
             return expression.parseExpression().prepareExpressionValues().buildPrefixTree(0);
         }
-        public static TruthTable BuildTruthTable(this IBinaryExpressionTree tree, string infixNotation)
-        {
-            List<INode> leafs = tree.GetLeafsSortedA2z();
-            int rows = (int)Math.Pow(2, leafs.Count());
-
-            return FillTruthTableVariablesValues(leafs, rows)
-                .EvaluateTruthTable(tree, infixNotation, rows);
-        }
-
-        public static TruthTableValues FillTruthTableVariablesValues(List<INode> leafs, int rows)
-        {
-            TruthTableValues tableValues = new TruthTableValues();
-            foreach (INode leaf in leafs)
-            {
-                int numberOfZeros = (int)Math.Pow(2, (leafs.Count() - tableValues.Count()) - 1);
-
-                string valueToAdd = "0";
-
-                int curr = 0;
-
-                for (int i = 0; i < rows; i++)
-                {
-                    if (tableValues.ContainsKey($@"{leaf.Value}"))
-                        tableValues[$@"{leaf.Value}"].Add(valueToAdd);
-                    else
-                        tableValues.Add($@"{leaf.Value}", new List<string>() { valueToAdd });
-
-                    if (++curr == numberOfZeros)
-                    {
-                        valueToAdd = valueToAdd == "0" ? "1" : "0";
-                        curr = 0;
-                    }
-                }
-            }
-            return tableValues;
-        }
-
-        private static TruthTable EvaluateTruthTable(
-            this TruthTableValues tableValues,
-            IBinaryExpressionTree tree,
-            string infixNotation,
-            int rows)
-        {
-            tableValues.Add(infixNotation, new List<string>());
-            Stack<bool> stack = new Stack<bool>();
-            var postOrderedTree = tree.TraversePostOrder();
-            for (int i = 0; i < rows; i++)
-            {
-                foreach (var node in postOrderedTree)
-                {
-                    if (node.Value.isOperator())
-                    {
-                        if (((char)Operators.Negation).Equals(node.Value))
-                        {
-                            bool value = stack.Pop();
-                            Operators operatoValue = (Operators)node.Value;
-
-                            bool operationResult = GetOperationResult(value, operatoValue, null);
-                            stack.Push(operationResult);
-                        }
-                        else
-                        {
-                            bool value2 = stack.Pop();
-                            bool value1 = stack.Pop();
-                            Operators operatoValue = (Operators)node.Value;
-
-                            bool operationResult = GetOperationResult(value1, operatoValue, value2);
-                            stack.Push(operationResult);
-                        }
-                    }
-                    else
-                    {
-                        stack.Push(Convert.ToInt32(tableValues[$@"{node.Value}"][i]).ToBool());
-                    }
-                }
-                tableValues[infixNotation].Add(stack.Pop() ? "1" : "0");
-            }
-
-            return new TruthTable(tree, tableValues);
-        }
-        public static bool GetOperationResult(bool value1, Operators operatorValue, bool? value2)
-        {
-            switch (operatorValue)
-            {
-                case Operators.Negation:
-                    return !value1;
-                case Operators.Implication:
-                    return (!value1 | value2.Value);
-                case Operators.Biimplication:
-                    return (value1 == value2.Value);
-                case Operators.Conjunction:
-                    return (value1 && value2.Value);
-                case Operators.Disjunction:
-                    return (value1 || value2.Value);
-                default:
-                    return false;
-            }
-        }
+   
     }
 }
