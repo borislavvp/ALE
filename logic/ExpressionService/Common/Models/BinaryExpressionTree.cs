@@ -61,7 +61,7 @@ namespace logic.ExpressionService.Common.Models
         }
         public List<INode> GetLeafsSortedA2z()
         {
-            return HelperExtensions.countSortLeafs(GetLeafs());
+            return HelperExtensions.CountSortNodes(GetLeafs());
         }
 
         public Stack<INode> TraversePostOrder()

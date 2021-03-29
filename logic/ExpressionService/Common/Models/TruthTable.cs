@@ -38,23 +38,13 @@ namespace logic.ExpressionService.Common.Models
             return output;
         }
 
-        public List<string> GetRowValues(int row)
-        {
-            var list = new List<string>();
-            foreach (var key in Value.Keys)
-            {
-                list.Add(this.Value[key][row]);
-            }
-            return list;
-        }
-
         public TruthTableValues Simplify()
         {
             /* Get a clone version of the table that is going to be simplified */
             var Simplified = this.Value.Clone() as TruthTableValues;
 
             /* CalculatePrimeImplicants the prime implicant values with the QuineMcCluskey algorithm*/
-            var primeImplicants = QuineMcCluskey.CalculatePrimeImplicants(this.Value);
+            var primeImplicants = QuineMcCluskey.SimplifyTable(this.Value);
 
             /* Get the number of rows so we can iterate through them and remove the positive results from the table */
             int numberOfRows = Simplified.First().Value.Count();

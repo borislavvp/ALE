@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="ExpressionService\Common\QMC\Interfaces\" />
+    <Compile Remove="ExpressionService\Common\QMC\Interfaces\**" />
+    <EmbeddedResource Remove="ExpressionService\Common\QMC\Interfaces\**" />
+    <None Remove="ExpressionService\Common\QMC\Interfaces\**" />
   </ItemGroup>
 
 </Project>

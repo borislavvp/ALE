@@ -7,22 +7,22 @@ namespace logic.ExpressionService.Common.QMC.Models
     public class QMCGroupData
     {
         public int OriginRow { get; set; }
-        public string[] Rows { get; set; }
+        public int[] Rows { get; set; }
         public string RowData { get; set; }
 
         public QMCGroupData()
         {
-
+            this.Rows = new int[0];
         }
         public QMCGroupData(int Origin, string RowData)
         {
             this.OriginRow = Origin;
-            this.Rows = new string[1] { $@"{Origin}" };
+            this.Rows = new int[1] { Origin };
             this.RowData = RowData;
         }
-        public QMCGroupData(string[] Rows, string RowData)
+        public QMCGroupData(int[] Rows, string RowData)
         {
-            this.OriginRow = Int32.Parse(Rows[0]);
+            this.OriginRow = Rows[0];
             this.Rows = Rows;
             this.RowData = RowData;
         }
@@ -35,11 +35,7 @@ namespace logic.ExpressionService.Common.QMC.Models
 
         public int GetAbsoluteRowComparableIndex()
         {
-            if(this.Rows[this.Rows.Length - 1] == "3" && this.Rows[0] == "0")
-            {
-                var asd = 0;
-            }
-            return Int32.Parse(this.Rows[this.Rows.Length-1]) - Int32.Parse(this.Rows[0]);
+            return this.Rows[this.Rows.Length-1] - this.Rows[0];
         }
 
         public int NumberOfRows()
