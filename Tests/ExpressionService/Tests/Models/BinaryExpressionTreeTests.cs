@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Tests.ExpressionService.Models
+namespace Tests.ExpressionService.Tests.Models
 {
     class BinaryExpressionTreeTests
     {

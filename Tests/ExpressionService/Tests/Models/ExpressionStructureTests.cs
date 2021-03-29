@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Tests.ExpressionService.Models
+namespace Tests.ExpressionService.Tests.Models
 {
     class ExpressionStructureTests
     {
@@ -47,24 +47,16 @@ namespace Tests.ExpressionService.Models
             structure.ToString().Should().BeEquivalentTo(VALID_INFIX);
         }
 
-        [Test]
-        [TestCase("|(=(A,B),&(C,A))")]
-        [TestCase("|(>(~(A),B)>(~(a),>(~(C),A)))")]
-        [TestCase(">(|(~(A),C)&(~(a),|(~(W),|(~(B),Q))))")]
-        [TestCase("=(>(~(A),C)|(~(a),&(~(W),Q)))")]
-        public void BuildExpressionTree_Should_Create_ExpressionTree_From_PrefixExpression(string prefixExpressionValue)
+        public void BuildExpressionTree_Should_Invoke_BuildingOfExpressionTree_On_Prefix_Expression(string prefixExpressionValue)
         {
-            IPrefixExpression prefixExpression = new PrefixExpression(prefixExpressionValue);
-            ExpressionStructure structure = new ExpressionStructure(prefixExpression);
+            var mockTree = new Mock<IBinaryExpressionTree>();
+            _mockPrefixExpression.Setup(p => p.BuildExpressionTree()).Returns(mockTree.Object);
+            ExpressionStructure structure = new ExpressionStructure(_mockPrefixExpression.Object);
 
             structure.BuildExpressionTree();
 
-            structure
-                .ExpressionTree
-                .GetNodes()
-                .Select(n => n.Value)
-                .Should()
-                .BeEquivalentTo(prefixExpression.parseExpression().Value);
+            _mockPrefixExpression.Verify(p => p.BuildExpressionTree());
+            structure.ExpressionTree.Should().BeEquivalentTo(mockTree.Object);
         }
 
         [Test]
