@@ -22,7 +22,7 @@ jobs:
     - name: DotCover Github Actions wrapper
       uses: dodopizza/dotcover-action@v1
       with:
-         dotCoverCommand: dotnet--output=TestResults.xml --reportType=XML -- test
+         dotCoverCommand: dotnet --output=TestResults.xml --reportType=XML -- test
 #     - name: Test
 #       run: dotnet test /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov --no-build --verbosity normal 
     - name: Codacy Coverage Reporter
