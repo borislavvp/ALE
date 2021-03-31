@@ -132,7 +132,8 @@
       </div>
       <div
         style="width:100%;height:800px"
-        class="relative overflow-y-auto bg-white rounded-xl mt-2 shadow-xl"
+        :class="{ 'bg-white shadow-xl': component !== Overview }"
+        class="relative overflow-y-auto rounded-xl mt-2 "
       >
         <loading-spinner v-if="IS_EVALUATING" />
         <component
@@ -152,7 +153,7 @@
     defineComponent,
     ref,
     computed,
-    onMounted
+    onBeforeMount
   } from "@vue/composition-api";
   import LoadingSpinner from "./LoadingSpinner.vue";
   import GraphNetwork from "./GraphNetwork.vue";
@@ -198,7 +199,7 @@
           .catch(e => console.log(e));
       };
 
-      onMounted(() => (component.value = Overview));
+      onBeforeMount(() => (component.value = Overview));
       return {
         component,
         SeeGraph,
@@ -206,6 +207,7 @@
         TruthTableVisible,
         SeeTruthTable,
         SeeOverview,
+        Overview,
         OverviewVisible,
         IS_EVALUATING,
         expression,

@@ -4,19 +4,19 @@
       <button
         v-if="shouldShowSimplifyButton"
         @click="Simplify"
-        class="z-10 px-8 py-2 rounded-full outline-none focus:outline-none shadow-lg bg-blue-600 hover:bg-blue-600  text-white font-semibold fixed bottom-0 mb-4 -ml-7 bg-opacity-75 "
+        class="z-10 px-8 py-2 rounded-full outline-none focus:outline-none shadow-lg bg-blue-600 hover:bg-blue-600 text-white font-semibold fixed bottom-0 mb-4 -ml-7 bg-opacity-75"
       >
         Simplify Table
       </button>
       <button
         v-else
         @click="Normalize"
-        class="z-10 px-8 py-2 rounded-full outline-none focus:outline-none shadow-lg bg-yellow-600 hover:bg-yellow-600  text-white font-semibold fixed bottom-0 mb-4 -ml-7 bg-opacity-75 "
+        class="z-10 px-8 py-2 rounded-full outline-none focus:outline-none shadow-lg bg-yellow-600 hover:bg-yellow-600 text-white font-semibold fixed bottom-0 mb-4 -ml-7 bg-opacity-75"
       >
-        Normalize Table
+        Show Original Table
       </button>
     </div>
-    <table class="table-auto w-full ">
+    <table class="table-auto w-full">
       <thead>
         <tr>
           <th
@@ -31,6 +31,11 @@
       <tbody class="divide-y">
         <tr v-for="row in rows" :key="row">
           <td
+            :class="{
+              'bg-gradient-to-t from-gray-200 to-gray-300 text-black shadow-md': WeDontCareAboutValue(
+                getValue(v, row)
+              ),
+            }"
             class="text-center p-2 font-semibold"
             v-for="v in variables"
             :key="v + row"
@@ -46,17 +51,18 @@
 <script lang="ts">
   import { defineComponent, computed, ref } from "@vue/composition-api";
   import { TruthTable } from "@/types/TruthTable";
+  import { SimplifiedTruthTable } from "@/types/SimplifiedTruthTable";
 
   export default defineComponent({
     props: {
       TruthTable: {
         type: Object as () => TruthTable,
-        required: true
+        required: true,
       },
       SimplifiedTruthTable: {
-        type: Object as () => TruthTable,
-        required: true
-      }
+        type: Object as () => SimplifiedTruthTable,
+        required: true,
+      },
     },
     setup(props) {
       const tableToShow = ref(props.TruthTable);
@@ -67,7 +73,8 @@
         () => Object.keys(tableToShow.value).length > 0
       );
 
-      const Simplify = () => (tableToShow.value = props.SimplifiedTruthTable);
+      const Simplify = () =>
+        (tableToShow.value = props.SimplifiedTruthTable.Values);
       const Normalize = () => (tableToShow.value = props.TruthTable);
 
       const variables = computed(() => Object.keys(tableToShow.value));
@@ -76,6 +83,8 @@
       const getValue = (variable: string, row: number) => {
         return tableToShow.value[variable][row - 1];
       };
+      const WeDontCareAboutValue = (value: number) =>
+        `${value}` === props.SimplifiedTruthTable.DontCareCharacter;
       return {
         variables,
         rows,
@@ -83,9 +92,10 @@
         Simplify,
         Normalize,
         shouldShowButtons,
-        shouldShowSimplifyButton
+        shouldShowSimplifyButton,
+        WeDontCareAboutValue,
       };
-    }
+    },
   });
 </script>
 
