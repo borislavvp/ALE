@@ -9,7 +9,7 @@ namespace logic.ExpressionService.Common.Interfaces
     {
         public IPrefixExpression PrefixExpression { get; set; }
         public IBinaryExpressionTree ExpressionTree { get; set; }
-        public TruthTable TruthTable { get; set; }
+        public ITruthTable TruthTable { get; set; }
 
         void BuildExpressionTree();
         void BuildTruthTable();

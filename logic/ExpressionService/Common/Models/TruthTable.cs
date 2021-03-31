@@ -8,15 +8,13 @@ using System.Text;
 
 namespace logic.ExpressionService.Common.Models
 {
-    public class TruthTable
+    public class TruthTable: ITruthTable
     {
-        public IBinaryExpressionTree Tree { get; set; }
         public TruthTableValues Value { get; set; }
         public TruthTableValues SimplifiedValue { get; set; }
         public string HexResult { get; set; }
-        public TruthTable(IBinaryExpressionTree tree, TruthTableValues Value)
+        public TruthTable(TruthTableValues Value)
         {
-            this.Tree = tree;
             this.Value = Value;
             this.HexResult = CalculateHexResult();
             this.SimplifiedValue = Simplify();
@@ -78,12 +76,7 @@ namespace logic.ExpressionService.Common.Models
                     }
                 }
             }
-            var prefix = new PrefixExpression(normalizedValue.Pop());
-            var normalizedHex = prefix.BuildExpressionTree().BuildTruthTable("result").HexResult;
-            if (normalizedHex == this.HexResult)
-                return prefix;
-            else
-                return null;
+           return new PrefixExpression(normalizedValue.Pop());
         }
         public IPrefixExpression NormalizeOriginal()
         {

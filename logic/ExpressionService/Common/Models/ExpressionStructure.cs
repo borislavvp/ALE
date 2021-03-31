@@ -10,7 +10,7 @@ namespace logic.ExpressionService.Common.Models
     {
         public IPrefixExpression PrefixExpression { get; set; }
         public IBinaryExpressionTree ExpressionTree { get; set; }
-        public TruthTable TruthTable { get; set; }
+        public ITruthTable TruthTable { get; set; }
 
         public ExpressionStructure(IPrefixExpression expression)
         {
@@ -32,7 +32,7 @@ namespace logic.ExpressionService.Common.Models
         override
             public string ToString()
         {
-            return this.PrefixExpression.transformToInfix();
+            return this.PrefixExpression.TransformToInfix();
         }
     }
 }
