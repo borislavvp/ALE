@@ -21,7 +21,7 @@ namespace Tests.ExpressionService.Tests.Extensions
         public void Should_Remove_Brackets_Commans_And_WhiteSpaces_From_Passed_Expression(string expressionValue,string expectedResult)
         {
             IExpression expression = new PrefixExpression(expressionValue);
-            expression.parseExpression().Value.Should().BeEquivalentTo(expectedResult);
+            expression.ParseExpression().Value.Should().BeEquivalentTo(expectedResult);
         }
         
         [Test]
@@ -32,7 +32,7 @@ namespace Tests.ExpressionService.Tests.Extensions
         public void Should_Transform_Passed_Prefix_Expression_To_Infix_Notation(string expressionValue,string expectedResult)
         {
             IPrefixExpression expression = new PrefixExpression(expressionValue);
-            expression.transformToInfix().Should().BeEquivalentTo(expectedResult);
+            expression.TransformToInfix().Should().BeEquivalentTo(expectedResult);
         }
 
         [Test]
@@ -49,7 +49,17 @@ namespace Tests.ExpressionService.Tests.Extensions
             tree.GetNodes()
                 .Select(n => n.Value)
                 .Should()
-                .BeEquivalentTo(prefixExpression.parseExpression().Value);
+                .BeEquivalentTo(prefixExpression.ParseExpression().Value);
+        } 
+        
+        [Test]
+        [TestCase("|(|(A,B),C)", "%(%(%(%(A,A),%(B,B)),%(%(A,A),%(B,B))),%(C,C))")]
+        [TestCase("=(|(A,B),C))", "%(%(%(%(%(A,A),%(B,B)),%(%(A,A),%(B,B))),%(C,C)),%(%(%(A,A),%(B,B)),C))")]
+        [TestCase(">(>(A,B),C))", "%(%(A,%(B,B)),%(C,C))")]
+        public void Nandify_Should_Create_ExpressionTree_From_PrefixExpression(string prefixExpressionValue,string expected)
+        {
+            IPrefixExpression prefixExpression = new PrefixExpression(prefixExpressionValue);
+            prefixExpression.NandifyExpression().Should().BeEquivalentTo(expected);
         }
 
     }

@@ -47,7 +47,7 @@ namespace Tests.ExpressionService.Helpers
 
             values.Add("RESULT", resultValues);
 
-            return new TruthTable(new Mock<IBinaryExpressionTree>().Object, values);
+            return new TruthTable(values);
 
         }
     }

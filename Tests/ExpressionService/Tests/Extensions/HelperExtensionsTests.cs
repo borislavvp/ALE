@@ -20,7 +20,7 @@ namespace Tests.ExpressionService.Tests.Extensions
         [TestCase("@", false)]
         [TestCase("!", false)]
         [TestCase("$", false)]
-        [TestCase("%", false)]
+        [TestCase("%", true)]
         [TestCase("^", false)]
         [TestCase("(", false)]
         [TestCase(")", false)]
@@ -31,6 +31,18 @@ namespace Tests.ExpressionService.Tests.Extensions
         public void Should_Return_Whether_Charracter_Is_Operator(char character, bool expected)
         {
             character.IsOperator().Should().Be(expected);
+        } 
+        
+        [Test]
+        [TestCase(Operators.Implication,">")]
+        [TestCase(Operators.Disjunction,"|")]
+        [TestCase(Operators.Biimplication,"=")]
+        [TestCase(Operators.Conjunction,"&")]
+        [TestCase(Operators.Negation,"~")]
+        [TestCase(Operators.Nand,"%")]
+        public void Should_Return_The_Value_Coresponding_To_The_Passed_Operator(Operators op, string expected)
+        {
+            op.OperatorValue().Should().Be(expected);
         } 
         
         [Test]
