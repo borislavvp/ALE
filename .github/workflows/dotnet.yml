@@ -19,10 +19,6 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
-#     - name: DotCover Github Actions wrapper
-#       uses: dodopizza/dotcover-action@v1
-#       with:
-#          dotCoverCommand: dotnet --output=TestResults.xml --dcReportType=DetailedXml -- test
     - name: Test
       run: dotnet test /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov --no-build --verbosity normal 
     - name: Codacy Coverage Reporter
