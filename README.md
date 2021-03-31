@@ -1,0 +1,2 @@
+# ALE
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/bd1c26b2f9da479c8060980c51d3e337)](https://app.codacy.com/gh/borislavvp/ALE?utm_source=github.com&utm_medium=referral&utm_content=borislavvp/ALE&utm_campaign=Badge_Grade_Settings)
