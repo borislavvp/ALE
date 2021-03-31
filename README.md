@@ -3,6 +3,7 @@
 
 ## About
 **The project is about an application which can parse and evaluate expressions in prefixn notation. Building and visualizing expression trees, truth tables and simplifying them following the Quine McCluskey algorithm.**
+![image](https://user-images.githubusercontent.com/46525030/113195058-8033d000-926a-11eb-8cb6-47d41574f1a7.png)
 
 The following logical operators are supported:
 * Disjunction
