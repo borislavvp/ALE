@@ -10,6 +10,8 @@ namespace logic.ExpressionService.Common.Models
         Conjunction = '&',
         Disjunction = '|',
         Implication = '>',
-        Biimplication = '='
+        Biimplication = '=',
+        Nand = '%'
     }
+
 }
