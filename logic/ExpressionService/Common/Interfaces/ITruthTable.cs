@@ -8,10 +8,8 @@ namespace logic.ExpressionService.Common.Models
     public interface ITruthTable 
     {
         TruthTableValues Value { get; set; }
-        TruthTableValues SimplifiedValue { get; set; }
-        string HexResult { get; set; }
+        string HexResult { get;}
 
-        string CalculateHexResult();
         IPrefixExpression NormalizeOriginal();
         IPrefixExpression NormalizeSimplified();
         TruthTableValues Simplify();

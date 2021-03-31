@@ -11,16 +11,13 @@ namespace logic.ExpressionService.Common.Models
     public class TruthTable: ITruthTable
     {
         public TruthTableValues Value { get; set; }
-        public TruthTableValues SimplifiedValue { get; set; }
-        public string HexResult { get; set; }
+        public string HexResult { get { return CalculateHexResult(); } }
         public TruthTable(TruthTableValues Value)
         {
             this.Value = Value;
-            this.HexResult = CalculateHexResult();
-            this.SimplifiedValue = Simplify();
         }
 
-        public string CalculateHexResult()
+        private string CalculateHexResult()
         {
             string binaryNumber = String.Join("", Value[Value.Keys.Last()]);
 
@@ -84,7 +81,7 @@ namespace logic.ExpressionService.Common.Models
         }
         public IPrefixExpression NormalizeSimplified()
         {
-            return this.NormalizeTable(this.SimplifiedValue);
+            return this.NormalizeTable(this.Simplify());
         }
         public TruthTableValues Simplify()
         {

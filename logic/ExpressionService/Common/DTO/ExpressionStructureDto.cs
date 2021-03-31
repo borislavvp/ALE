@@ -31,7 +31,7 @@ namespace logic.ExpressionService.Common.DTO
             this.TruthTable = structure.TruthTable.Value;
             this.SimplifiedTruthTable = new SimplifiedTruthTableValues
             {
-                Values = structure.TruthTable.SimplifiedValue,
+                Values = structure.TruthTable.Simplify(),
                 DontCareCharacter = QuineMcCluskey.DONT_CARE
             };
             this.HexResult = structure.TruthTable.HexResult;
