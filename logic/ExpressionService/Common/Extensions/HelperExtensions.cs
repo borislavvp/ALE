@@ -14,7 +14,70 @@ namespace logic.ExpressionService.Common.Extensions
                     ((char)Operators.Implication).Equals(value) ||
                     ((char)Operators.Conjunction).Equals(value) ||
                    ((char)Operators.Disjunction).Equals(value) ||
+                   ((char)Operators.Nand).Equals(value) ||
                     ((char)Operators.Negation).Equals(value);
+        }
+        
+        public static string OperatorValue(this Operators operatorValue)
+        {
+            switch (operatorValue)
+            {
+                case Operators.Negation:
+                    return "~";
+                case Operators.Implication:
+                    return ">";
+                case Operators.Biimplication:
+                    return "=";
+                case Operators.Conjunction:
+                    return "&";
+                case Operators.Disjunction:
+                    return "|";
+                case Operators.Nand:
+                    return "%";
+                default:
+                    return "";
+            }
+        }
+        public static bool GetOperationResult(bool value1, Operators operatorValue, bool? value2 = null)
+        {
+            switch (operatorValue)
+            {
+                case Operators.Negation:
+                    return !value1;
+                case Operators.Implication:
+                    return (!value1 | value2.Value);
+                case Operators.Biimplication:
+                    return (value1 == value2.Value);
+                case Operators.Conjunction:
+                    return (value1 && value2.Value);
+                case Operators.Disjunction:
+                    return (value1 || value2.Value);
+                case Operators.Nand:
+                    return (!value1 || !value2.Value);
+                default:
+                    return false;
+            }
+        }
+        
+        public static string NadifyOperationResult(string value1, Operators operatorValue, string value2 = null)
+        {
+            switch (operatorValue)
+            {
+                case Operators.Nand:
+                    return $@"%({value1},{value2})";  
+                case Operators.Negation:
+                    return $@"%({value1},{value1})";
+                case Operators.Implication:
+                    return $@"%({value1},%({value2},{value2}))";
+                case Operators.Biimplication:
+                    return $@"%(%(%({value1},{value1}),%({value2},{value2})),%({value1},{value2}))";
+                case Operators.Conjunction:
+                    return $@"%(%({value1},{value2}),%({value1},{value2}))";
+                case Operators.Disjunction:
+                    return $@"%(%({value1},{value1}),%({value2},{value2}))";
+                default:
+                    return String.Empty;
+            }
         }
 
         public static bool ToBool(this int value)

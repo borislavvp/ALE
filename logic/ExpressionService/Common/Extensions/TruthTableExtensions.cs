@@ -84,7 +84,7 @@ namespace logic.ExpressionService.Common.Extensions
                             bool value = stack.Pop();
                             Operators operatoValue = (Operators)node.Value;
 
-                            bool operationResult = GetOperationResult(value, operatoValue, null);
+                            bool operationResult = HelperExtensions.GetOperationResult(value, operatoValue);
                             stack.Push(operationResult);
                         }
                         else
@@ -93,7 +93,7 @@ namespace logic.ExpressionService.Common.Extensions
                             bool value1 = stack.Pop();
                             Operators operatoValue = (Operators)node.Value;
 
-                            bool operationResult = GetOperationResult(value1, operatoValue, value2);
+                            bool operationResult = HelperExtensions.GetOperationResult(value1, operatoValue, value2);
                             stack.Push(operationResult);
                         }
                     }
@@ -105,25 +105,8 @@ namespace logic.ExpressionService.Common.Extensions
                 tableValues[resultColumnName].Add(stack.Pop() ? "1" : "0");
             }
 
-            return new TruthTable(tree, tableValues);
+            return new TruthTable(tableValues);
         }
-        private static bool GetOperationResult(bool value1, Operators operatorValue, bool? value2)
-        {
-            switch (operatorValue)
-            {
-                case Operators.Negation:
-                    return !value1;
-                case Operators.Implication:
-                    return (!value1 | value2.Value);
-                case Operators.Biimplication:
-                    return (value1 == value2.Value);
-                case Operators.Conjunction:
-                    return (value1 && value2.Value);
-                case Operators.Disjunction:
-                    return (value1 || value2.Value);
-                default:
-                    return false;
-            }
-        }
+        
     }
 }
