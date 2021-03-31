@@ -6,9 +6,9 @@ using System.Text;
 
 namespace logic.ExpressionService
 {
-    public class ExpressionService
+    public static class ExpressionService
     {
-        public ExpressionStructureDto EvaluateExpression(string expressionValue)
+        public static ExpressionStructureDto EvaluateExpression(string expressionValue)
         {
             ExpressionStructure structure = new ExpressionStructure(new PrefixExpression(expressionValue));
             structure.BuildExpressionTree();

@@ -12,8 +12,6 @@ namespace server.Controllers
     [Route("api")]
     public class ExpressionController : Controller
     {
-        public ExpressionService ExpressionService = new ExpressionService();
-
         [HttpPost]
         [Route("evaluate")]
         public ActionResult<ExpressionStructureDto> EvaluateExpression(string expression)
