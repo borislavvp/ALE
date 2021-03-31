@@ -125,8 +125,19 @@
         />
         <button
           @click="evaluateExpression"
-          class="ml-4 rounded shadow-lg px-4 py-2 bg-white text-green-700 font-semibold  uppercase text-white"
+          class="ml-4 relative focus:outline-none focus:ring rounded shadow-lg px-4 py-2 bg-white text-green-700 font-semibold  uppercase text-white"
         >
+          <span
+            v-if="ShouldEvaluate"
+            class="flex absolute h-3 w-3 top-0 right-0 -mt-1 -mr-1"
+          >
+            <span
+              class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"
+            ></span>
+            <span
+              class="relative inline-flex rounded-full h-3 w-3 bg-blue-500"
+            ></span>
+          </span>
           evaluate
         </button>
       </div>
@@ -161,7 +172,6 @@
   import TruthTable from "./TruthTable.vue";
   import expressionProvider from "@/providers/expressionProvider";
   import Graph from "@/providers/Graph";
-  import { Network } from "vis-network";
   export default defineComponent({
     components: {
       LoadingSpinner,
@@ -179,6 +189,7 @@
       const {
         IS_EVALUATING,
         expression,
+        ShouldEvaluate,
         evaluation,
         evaluate,
         setExpression
@@ -213,7 +224,8 @@
         expression,
         evaluation,
         evaluateExpression,
-        setExpression
+        setExpression,
+        ShouldEvaluate
       };
     }
   });

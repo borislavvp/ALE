@@ -5,6 +5,7 @@ import { computed, reactive, ref } from '@vue/composition-api';
 export default function() {
 	const IS_EVALUATING = ref(false);
 	const expression = ref('|(>(~(A),B)>(~(a),C))');
+	const expressionEvaluated = ref('');
 	const evaluation = reactive({
 		TruthTable: {},
 		SimplifiedTruthTable: { Values: {}, DontCareCharacter: '' },
@@ -23,7 +24,8 @@ export default function() {
 		return new Promise((resolve) => {
 			expressionService
 				.evaluateExpression(expression.value)
-                .then((result) => {
+				.then((result) => {
+					expressionEvaluated.value = expression.value;
 					evaluation.Nodes = result.Nodes;
 					evaluation.Edges = result.Edges;
 					evaluation.Leafs = result.Leafs;
@@ -55,5 +57,6 @@ export default function() {
 		evaluation: computed(() => evaluation),
 		evaluate,
 		setExpression,
+		ShouldEvaluate:computed(() => expression.value !== expressionEvaluated.value)
 	};
 }

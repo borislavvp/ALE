@@ -26,12 +26,6 @@
           }}</span>
         </div>
         <div class="flex justify-between mb-10">
-          <span class="text-gray-800 font-semibold text-lg mr-4">DNF:</span>
-          <span class="text-green-600 font-semibold text-lg">{{
-            EvalutionData.DNF
-          }}</span>
-        </div>
-        <div class="flex justify-between mb-10">
           <span class="text-gray-800 font-semibold text-lg mr-4"
             >Simplified DNF:</span
           >
@@ -39,10 +33,16 @@
             EvalutionData.SimplifiedDNF
           }}</span>
         </div>
-        <div class="flex justify-between">
+        <div class="flex justify-between mb-10">
           <span class="text-gray-800 font-semibold text-lg mr-4">Nandify:</span>
           <span class="text-green-600 font-semibold text-lg">{{
             EvalutionData.Nandify
+          }}</span>
+        </div>
+        <div class="flex justify-between ">
+          <span class="text-gray-800 font-semibold text-lg mr-4">DNF:</span>
+          <span class="text-green-600 font-semibold text-lg">{{
+            EvalutionData.DNF
           }}</span>
         </div>
       </div>
