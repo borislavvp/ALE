@@ -66,18 +66,18 @@ namespace logic.ExpressionService.Common.Models
 
         public Stack<INode> TraversePostOrder()
         {
-            Stack<IBinaryExpressionTree> queue = new Stack<IBinaryExpressionTree>();
+            Stack<IBinaryExpressionTree> temp = new Stack<IBinaryExpressionTree>();
             Stack<INode> stack = new Stack<INode>();
-            queue.Push(this);
-            while (queue.Count > 0)
+            temp.Push(this);
+            while (temp.Count > 0)
             {
-                IBinaryExpressionTree root = queue.Pop();
+                IBinaryExpressionTree root = temp.Pop();
                 stack.Push(root.CurrentNode);
 
                 if (root.LeftChild != null)
-                    queue.Push(root.LeftChild);
+                    temp.Push(root.LeftChild);
                 if (root.RightChild != null)
-                    queue.Push(root.RightChild);
+                    temp.Push(root.RightChild);
             }
             return stack;
         }
