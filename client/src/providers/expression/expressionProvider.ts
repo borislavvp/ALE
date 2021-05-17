@@ -1,23 +1,38 @@
 import { expressionService } from '@/api/expressionRepository';
-import { ExpressionEvaluation } from '@/types/ExpressionEvaluation';
+import { ExpressionEvaluation } from '@/types/expression/ExpressionEvaluation';
+import { TruthTable } from '@/types/expression/TruthTable';
 import { computed, reactive, ref } from '@vue/composition-api';
 
-export default function() {
+interface Evaluation extends ExpressionEvaluation {
+	TableToShow: { value: TruthTable, type: "original" | "simplified" | "" }
+}
+const evaluation = reactive<Evaluation>({
+	TruthTable: {},
+	SimplifiedTruthTable: { Values: {}, DontCareCharacter: '' },
+	Nodes: [],
+	Edges: [],
+	Leafs: "",
+	HexResult: "",
+	DNF: "",
+	SimplifiedDNF:"",
+	InfixNotation: '',
+	Nandify: '',
+	TableToShow: { value: {}, type: "" }
+});
+
+export function expressionProvider() {
 	const IS_EVALUATING = ref(false);
 	const expression = ref('|(>(~(A),B)>(~(a),C))');
 	const expressionEvaluated = ref('');
-	const evaluation = reactive({
-		TruthTable: {},
-		SimplifiedTruthTable: { Values: {}, DontCareCharacter: '' },
-		Nodes: [],
-		Edges: [],
-		Leafs: "",
-		HexResult: "",
-		DNF: "",
-		SimplifiedDNF:"",
-		InfixNotation: '',
-		Nandify: ''
-	} as ExpressionEvaluation);
+
+	const ShowSimplifiedTable = () => {
+		evaluation.TableToShow.value = evaluation.SimplifiedTruthTable.Values;
+		evaluation.TableToShow.type = "simplified";
+	}
+	const ShowOriginalTable = () => {
+		evaluation.TableToShow.value = evaluation.TruthTable;
+		evaluation.TableToShow.type = "original";
+	};
 
 	const evaluate = (): Promise<void> => {
 		IS_EVALUATING.value = true;
@@ -36,6 +51,7 @@ export default function() {
 					evaluation.InfixNotation = result.InfixNotation;
 					evaluation.SimplifiedTruthTable = result.SimplifiedTruthTable;
 					evaluation.TruthTable = result.TruthTable;
+					evaluation.TableToShow = { value: result.TruthTable, type: "original" };
 				})
 				.catch((e) => console.log(e))
 				.finally(() => {
@@ -57,6 +73,9 @@ export default function() {
 		evaluation: computed(() => evaluation),
 		evaluate,
 		setExpression,
-		ShouldEvaluate:computed(() => expression.value !== expressionEvaluated.value)
+		ShouldEvaluate: computed(() => expression.value !== expressionEvaluated.value),
+		ShowSimplifiedTable,
+		ShowOriginalTable,
+		DontCareCharacter: computed(() => evaluation.SimplifiedTruthTable.DontCareCharacter)
 	};
 }

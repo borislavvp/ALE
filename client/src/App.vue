@@ -1,17 +1,17 @@
 <template>
   <div id="app" class="bg-gray-100">
-    <Main />
+    <ExpressionMain />
   </div>
 </template>
 
 <script lang="ts">
   import Vue from "vue";
-  import Main from "./components/Main.vue";
+  import ExpressionMain from "./components/expression/Main.vue";
 
   export default Vue.extend({
     name: "App",
     components: {
-      Main
+      ExpressionMain
     }
   });
 </script>

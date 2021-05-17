@@ -1,7 +1,7 @@
 import { Network } from "vis-network/peer/esm/vis-network";
 import { DataSet } from "vis-data/peer/esm/vis-data"
 import { reactive } from '@vue/composition-api';
-import { ExpressionEvaluation } from "@/types/ExpressionEvaluation";
+import { ExpressionEvaluation } from "@/types/expression/ExpressionEvaluation";
 
 export default function (data: ExpressionEvaluation) {
   const graphData = reactive({
