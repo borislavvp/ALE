@@ -1,6 +1,6 @@
 import { TruthTable } from "./TruthTable";
 
 export interface SimplifiedTruthTable {
-    Values:TruthTable;
-    DontCareCharacter:string
+  Values: TruthTable;
+  DontCareCharacter: string;
 }

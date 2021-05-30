@@ -1,0 +1,35 @@
+alphabet: xyz
+states: A1,B1,C1,A2,B2,C2
+final: C2
+transitions:
+A1,_ --> A1
+A1,_ --> B1
+A1,_ --> C1
+B1,_ --> A1
+B1,_ --> B1
+B1,_ --> C1
+C1,_ --> A1
+C1,_ --> B1
+C1,_ --> C1
+
+A2,_ --> A2
+A2,_ --> B2
+A2,_ --> C2
+B2,_ --> A2
+B2,_ --> B2
+B2,_ --> C2
+C2,_ --> A2
+C2,_ --> B2
+C2,_ --> C2
+
+C1,x --> A2
+A2,y --> C1
+end.
+words:
+,n
+a,y
+b,y
+aa,n
+abbb,y
+bbbb,y
+end.

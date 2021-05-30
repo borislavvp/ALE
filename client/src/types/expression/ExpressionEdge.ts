@@ -1,6 +1,6 @@
-import { ExpressionNode } from './ExpressionNode';
+import { ExpressionNode } from "./ExpressionNode";
 
 export interface ExpressionEdge {
-    Child:ExpressionNode;
-    Parent:ExpressionNode;
+  Child: ExpressionNode;
+  Parent: ExpressionNode;
 }

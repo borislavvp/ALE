@@ -166,106 +166,106 @@
 </template>
 
 <script lang="ts">
-  import {
-    defineComponent,
-    ref,
-    computed,
-    onBeforeMount
-  } from "@vue/composition-api";
-  import LoadingSpinner from "./LoadingSpinner.vue";
-  import GraphNetwork from "./GraphNetwork.vue";
-  import Overview from "./Overview.vue";
-  import TruthTable from "./TruthTable.vue";
-  import { expressionProvider } from "@/providers/expression/expressionProvider";
-  import Graph from "@/providers/expression/ExpressionGraph";
-  import TruthTableOptions from "./TruthTableOptions.vue";
-  export default defineComponent({
-    components: {
-      LoadingSpinner,
+import {
+  defineComponent,
+  ref,
+  computed,
+  onBeforeMount
+} from "@vue/composition-api";
+import LoadingSpinner from "./LoadingSpinner.vue";
+import GraphNetwork from "./GraphNetwork.vue";
+import Overview from "./Overview.vue";
+import TruthTable from "./TruthTable.vue";
+import { expressionProvider } from "@/providers/expression/expressionProvider";
+import Graph from "@/providers/expression/ExpressionGraph";
+import TruthTableOptions from "./TruthTableOptions.vue";
+export default defineComponent({
+  components: {
+    LoadingSpinner,
+    Overview,
+    GraphNetwork,
+    TruthTable,
+    TruthTableOptions
+  },
+  setup(_, context) {
+    const component = ref({});
+
+    const GraphVisible = computed(() => component.value === GraphNetwork);
+    const TruthTableVisible = computed(() => component.value === TruthTable);
+    const OverviewVisible = computed(() => component.value === Overview);
+
+    const {
+      IS_EVALUATING,
+      expression,
+      ShouldEvaluate,
+      evaluation,
+      evaluate,
+      setExpression
+    } = expressionProvider();
+    const shouldShowTableOptions = computed(
+      () => Object.keys(evaluation.value.TableToShow.value).length > 0
+    );
+    const graph = computed(() => Graph(evaluation.value));
+
+    const SeeGraph = () => {
+      component.value = GraphNetwork;
+      context.root.$nextTick(() => graph.value.showGraph());
+    };
+    const SeeOverview = () => (component.value = Overview);
+    const SeeTruthTable = () => (component.value = TruthTable);
+
+    const evaluateExpression = () => {
+      evaluate()
+        .then(() => component.value === GraphNetwork && SeeGraph())
+        .catch(e => console.log(e));
+    };
+
+    onBeforeMount(() => (component.value = Overview));
+    return {
+      component,
+      SeeGraph,
+      GraphVisible,
+      TruthTableVisible,
+      SeeTruthTable,
+      SeeOverview,
       Overview,
-      GraphNetwork,
-      TruthTable,
-      TruthTableOptions
-    },
-    setup(_, context) {
-      const component = ref({});
-
-      const GraphVisible = computed(() => component.value === GraphNetwork);
-      const TruthTableVisible = computed(() => component.value === TruthTable);
-      const OverviewVisible = computed(() => component.value === Overview);
-
-      const {
-        IS_EVALUATING,
-        expression,
-        ShouldEvaluate,
-        evaluation,
-        evaluate,
-        setExpression
-      } = expressionProvider();
-      const shouldShowTableOptions = computed(
-        () => Object.keys(evaluation.value.TableToShow.value).length > 0
-      );
-      const graph = computed(() => Graph(evaluation.value));
-
-      const SeeGraph = () => {
-        component.value = GraphNetwork;
-        context.root.$nextTick(() => graph.value.showGraph());
-      };
-      const SeeOverview = () => (component.value = Overview);
-      const SeeTruthTable = () => (component.value = TruthTable);
-
-      const evaluateExpression = () => {
-        evaluate()
-          .then(() => component.value === GraphNetwork && SeeGraph())
-          .catch(e => console.log(e));
-      };
-
-      onBeforeMount(() => (component.value = Overview));
-      return {
-        component,
-        SeeGraph,
-        GraphVisible,
-        TruthTableVisible,
-        SeeTruthTable,
-        SeeOverview,
-        Overview,
-        OverviewVisible,
-        IS_EVALUATING,
-        expression,
-        evaluation,
-        evaluateExpression,
-        setExpression,
-        ShouldEvaluate,
-        shouldShowTableOptions
-      };
-    }
-  });
+      OverviewVisible,
+      IS_EVALUATING,
+      expression,
+      evaluation,
+      evaluateExpression,
+      setExpression,
+      ShouldEvaluate,
+      shouldShowTableOptions
+    };
+  }
+});
 </script>
 <style scoped>
-  /* width */
-  ::-webkit-scrollbar {
-    width: 10px;
-  }
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
 
-  /* Track */
-  ::-webkit-scrollbar-track {
-    background: #ebebeb;
-  }
+/* Track */
+::-webkit-scrollbar-track {
+  background: #ebebeb;
+}
 
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: #c9c9c9;
-  }
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #c9c9c9;
+}
 
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgb(179, 179, 179);
-  }
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: opacity 0.5s;
-  }
-  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-    opacity: 0;
-  }
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(179, 179, 179);
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
 </style>

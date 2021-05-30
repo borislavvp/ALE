@@ -1,3 +1,3 @@
 export interface Letter {
-    Value: string;
+  Value: string;
 }

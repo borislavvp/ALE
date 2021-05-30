@@ -1,5 +1,6 @@
-export interface State{
-    Value: string,
-    Initial: boolean,
-    Final:boolean
+export interface State {
+  Id: number;
+  Value: string;
+  Initial: boolean;
+  Final: boolean;
 }

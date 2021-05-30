@@ -33,37 +33,36 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, computed, ref } from "@vue/composition-api";
-  import { expressionProvider } from "@/providers/expression/expressionProvider";
+import { defineComponent, computed, ref } from "@vue/composition-api";
+import { expressionProvider } from "@/providers/expression/expressionProvider";
 
-  export default defineComponent({
-    setup() {
-      const { evaluation, DontCareCharacter } = expressionProvider();
+export default defineComponent({
+  setup() {
+    const { evaluation, DontCareCharacter } = expressionProvider();
 
-      const variables = computed(() =>
-        Object.keys(evaluation.value.TableToShow.value)
-      );
+    const variables = computed(() =>
+      Object.keys(evaluation.value.TableToShow.value)
+    );
 
-      const rows = computed(
-        () => Object.values(evaluation.value.TableToShow.value)[0]?.length
-      );
+    const rows = computed(
+      () => Object.values(evaluation.value.TableToShow.value)[0]?.length
+    );
 
-      const getValue = (variable: string, row: number) => {
-        return evaluation.value.TableToShow.value[variable][row - 1];
-      };
-      const DontCareAboutValue = (value: number) =>
-        `${value}` === DontCareCharacter.value;
+    const getValue = (variable: string, row: number) => {
+      return evaluation.value.TableToShow.value[variable][row - 1];
+    };
+    const DontCareAboutValue = (value: number) =>
+      `${value}` === DontCareCharacter.value;
 
-      return {
-        evaluation,
-        variables,
-        rows,
-        getValue,
-        DontCareAboutValue
-      };
-    }
-  });
+    return {
+      evaluation,
+      variables,
+      rows,
+      getValue,
+      DontCareAboutValue
+    };
+  }
+});
 </script>
 
-<style>
-</style>
+<style></style>

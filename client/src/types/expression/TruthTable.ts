@@ -1,3 +1,3 @@
 export interface TruthTable {
-    [key:string]:number[]
+  [key: string]: number[];
 }

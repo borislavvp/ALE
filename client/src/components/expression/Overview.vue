@@ -44,18 +44,17 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent } from "@vue/composition-api";
-  import { ExpressionEvaluation } from "@/types/expression/ExpressionEvaluation";
+import { defineComponent } from "@vue/composition-api";
+import { ExpressionEvaluation } from "@/types/expression/ExpressionEvaluation";
 
-  export default defineComponent({
-    props: {
-      EvalutionData: {
-        type: Object as () => ExpressionEvaluation,
-        required: true
-      }
+export default defineComponent({
+  props: {
+    EvalutionData: {
+      type: Object as () => ExpressionEvaluation,
+      required: true
     }
-  });
+  }
+});
 </script>
 
-<style>
-</style>
+<style></style>

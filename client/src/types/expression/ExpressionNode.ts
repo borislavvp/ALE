@@ -1,6 +1,6 @@
 export interface ExpressionNode {
-    ID: string;
-    Value:string;
-    IsLeaf: boolean;
-    Level: number;
+  ID: string;
+  Value: string;
+  IsLeaf: boolean;
+  Level: number;
 }

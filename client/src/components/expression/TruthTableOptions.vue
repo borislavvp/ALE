@@ -18,25 +18,24 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, computed } from "@vue/composition-api";
-  import SimplifyTableIcon from "./SimplifyTableIcon.vue";
-  import OriginalTableIcon from "./OriginalTableIcon.vue";
-  import { expressionProvider } from "@/providers/expression/expressionProvider";
-  export default defineComponent({
-    components: { SimplifyTableIcon, OriginalTableIcon },
-    setup() {
-      const {
-        ShowSimplifiedTable,
-        ShowOriginalTable,
-        evaluation
-      } = expressionProvider();
-      const SimplifiedTableVisible = computed(
-        () => evaluation.value.TableToShow.type === "simplified"
-      );
-      return { ShowSimplifiedTable, ShowOriginalTable, SimplifiedTableVisible };
-    }
-  });
+import { defineComponent, computed } from "@vue/composition-api";
+import SimplifyTableIcon from "./SimplifyTableIcon.vue";
+import OriginalTableIcon from "./OriginalTableIcon.vue";
+import { expressionProvider } from "@/providers/expression/expressionProvider";
+export default defineComponent({
+  components: { SimplifyTableIcon, OriginalTableIcon },
+  setup() {
+    const {
+      ShowSimplifiedTable,
+      ShowOriginalTable,
+      evaluation
+    } = expressionProvider();
+    const SimplifiedTableVisible = computed(
+      () => evaluation.value.TableToShow.type === "simplified"
+    );
+    return { ShowSimplifiedTable, ShowOriginalTable, SimplifiedTableVisible };
+  }
+});
 </script>
 
-<style>
-</style>
+<style></style>
