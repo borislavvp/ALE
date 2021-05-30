@@ -6,7 +6,9 @@ namespace logic.FiniteAutomataService.Interfaces
 {
     public interface IFiniteAutomataStructure
     {
-        IAlphabet Alphabet { get; set; }
-        HashSet<IState> States { get; set; }
+        bool IsDFA { get; }
+        IAlphabet StructureAlphabet { get; set; }
+        SortedSet<IState> States { get; set; }
+        IState GetInitialState();
     }
 }

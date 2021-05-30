@@ -1,4 +1,5 @@
-﻿using System;
+﻿using logic.FiniteAutomataService.DTO;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,6 +7,8 @@ namespace logic.FiniteAutomataService.Interfaces
 {
     public interface IFiniteAutomataService
     {
-        IFiniteAutomataStructure strucutre { get; set; }
+        IFiniteAutomataStructure structure { get; set; }
+        FiniteAutomataStructureDto EvaluateFromInstructions(InstructionsInput input);
+        TestsEvaluationResultDTO EvaluateTestCases(TestsInput input);
     }
 }

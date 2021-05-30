@@ -6,6 +6,6 @@ namespace logic.FiniteAutomataService.Interfaces
 {
     public interface IAlphabet
     {
-        IList<ILetter> Letters { get; set; }
+        HashSet<ILetter> Letters { get; set; }
     }
 }

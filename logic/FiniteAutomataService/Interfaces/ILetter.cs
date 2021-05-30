@@ -6,6 +6,7 @@ namespace logic.FiniteAutomataService.Interfaces
 {
     public interface ILetter
     {
-        string Value { get; set; }
+        char Value { get; set; }
+        bool IsEpsilon{ get; }
     }
 }

@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using logic.FiniteAutomataService.Interfaces;
+using logic.FiniteAutomataService;
 
 namespace server
 {
@@ -27,12 +29,15 @@ namespace server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IFiniteAutomataService,FiniteAutomataService>();
             services.AddCors(options =>
             {
                 options.AddPolicy(name: MyAllowSpecificOrigins,
                                   builder =>
                                   {
-                                      builder.WithOrigins("http://localhost:8081");
+                                      builder.WithOrigins("http://localhost:8081")
+                                      .AllowAnyMethod()
+                                      .AllowAnyHeader(); 
                                   });
             });
 
@@ -43,7 +48,6 @@ namespace server
                 jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;
             })
             .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-
             services.AddControllers();
         }
 
