@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace logic.FiniteAutomataService.Models
+namespace logic.FiniteAutomataService.Constants
 {
     public static class InstructionDelimeter
     {

@@ -2,7 +2,9 @@
 using logic.FiniteAutomataService.DTO;
 using logic.FiniteAutomataService.Extensions;
 using logic.FiniteAutomataService.Interfaces;
+using logic.FiniteAutomataService.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,19 +16,21 @@ namespace server.Controllers
     [Route("api/finiteautomata")]
     public class FiniteAutomataController : Controller
     {
+        IConfiguration configuration;
         private IFiniteAutomataService _service;
-        public FiniteAutomataController(IFiniteAutomataService service)
+        public FiniteAutomataController(IConfiguration configuration, IFiniteAutomataService service)
         {
             this._service = service;
+            this.configuration = configuration;
         }
 
         [HttpPost]
         [Route("evaluate")]
-        public ActionResult<FiniteAutomataStructureDto> EvaluateInstructions([FromBody] InstructionsInput input)
+        public async Task<ActionResult<FiniteAutomataEvaluationDTO>> EvaluateInstructions([FromBody] InstructionsInput input)
         {
             try
             {
-                return Ok(_service.EvaluateFromInstructions(input));
+                return Ok(await _service.EvaluateFromInstructions(configuration,input));
             }
             catch (Exception e)
             {
@@ -35,12 +39,26 @@ namespace server.Controllers
         }
         
         [HttpPost]
-        [Route("words")]
-        public ActionResult<TestsEvaluationResultDTO> CheckWords([FromBody] TestsInput input)
+        [Route("tests")]
+        public ActionResult<TestsEvaluationResult> CheckTests([FromBody] TestsInput input)
         {
             try
             {
                 return Ok(_service.EvaluateTestCases(input));
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        [Route("check")]
+        public ActionResult<TestsEvaluationResult> CheckWord(string word)
+        {
+            try
+            {
+                return Ok(_service.CheckWord(word));
             }
             catch (Exception e)
             {

@@ -10,15 +10,18 @@ namespace logic.FiniteAutomataService.DTO
     public class FiniteAutomataStructureDto
     {
         public HashSet<StateDTO> States { get; set; }
-        public SortedSet<TransitionDTO> Transitions { get; set; }
+        public HashSet<TransitionDTO> Transitions { get; set; }
 
-        public FiniteAutomataStructureDto(IFiniteAutomataStructure structure)
+        public FiniteAutomataStructureDto(HashSet<IState> states)
         {
-            this.Transitions = new SortedSet<TransitionDTO>();
+            this.Transitions = new HashSet<TransitionDTO>();
             this.States = new HashSet<StateDTO>();
             int counter = 0;
-            GetStatesAccordingToDirections(structure.GetInitialState());
-            foreach (var state in structure.States)
+            foreach (var state in states)
+            {
+                this.States.Add(StateDTO.FromModel(state));
+            } 
+            foreach (var state in states)
             {
                 foreach (var direciton in state.Directions)
                 {
@@ -26,19 +29,6 @@ namespace logic.FiniteAutomataService.DTO
                     {
                         this.Transitions.Add(new TransitionDTO(++counter,StateDTO.FromModel(state), StateDTO.FromModel(direciton.Key), letter));
                     }
-                }
-            }
-        }
-
-        private void GetStatesAccordingToDirections(IState state)
-        {
-            this.States.Add(StateDTO.FromModel(state));
-            foreach (var direction in state.Directions)
-            {
-                if (!this.States.Contains(StateDTO.FromModel(direction.Key)))
-                {
-                    this.States.Add(StateDTO.FromModel(direction.Key));
-                    GetStatesAccordingToDirections(direction.Key);
                 }
             }
         }

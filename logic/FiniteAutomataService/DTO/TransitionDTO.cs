@@ -21,11 +21,24 @@ namespace logic.FiniteAutomataService.DTO
             this.To = To;
             this.Value = Value.IsEpsilon ? new Letter('ε'): Value;
         }
+        public override bool Equals(object obj)
+        {
+            var current = @$"{this.From.Id}{this.To.Id}{this.From.Value}{this.To.Value}";
+            return obj is TransitionDTO transition && current.Equals(@$"{transition.From.Id}{transition.To.Id}{transition.From.Value}{transition.To.Value}");
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = -157375006;
+            hashCode = hashCode * -1521134295 + this.Id;
+            hashCode = hashCode * -1521134295 + this.Id;
+            return hashCode;
+        }
         public int CompareTo([DisallowNull] TransitionDTO other)
         {
-            return (this.From.Id-this.To.Id).CompareTo(other.From.Id - other.To.Id) == 0 ?
-                this.From.CompareTo(other.From) :
-                (this.From.Id-this.To.Id).CompareTo(other.From.Id - other.To.Id) ;
+            var current = @$"{this.From.Id}{this.To.Id}{this.From.Value}{this.To.Value}";
+            var toCompareTransition = @$"{other.From.Id}{other.To.Id}{other.From.Value}{other.To.Value}";
+            return current.CompareTo(toCompareTransition);
         }
     }
 }

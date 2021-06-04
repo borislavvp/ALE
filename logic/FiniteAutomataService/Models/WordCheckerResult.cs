@@ -6,14 +6,12 @@ namespace logic.FiniteAutomataService.Models
 {
     public class WordCheckerResult
     {
-        public bool Answer { get; set; }
-        public bool TestGuess { get; set; }
+        public TestInputAnswer Test { get; set; }
         public string Word { get; set; }
 
-        public WordCheckerResult(bool Answer, bool TestGuess, string Word)
+        public WordCheckerResult(TestInputAnswer Test, string Word)
         {
-            this.Answer = Answer;
-            this.TestGuess = TestGuess;
+            this.Test = Test;
             this.Word = Word;
         }
     }

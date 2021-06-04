@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using logic.FiniteAutomataService.Models;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace logic.FiniteAutomataService
 {
@@ -12,15 +14,25 @@ namespace logic.FiniteAutomataService
     {
         public IFiniteAutomataStructure structure { get; set; }
 
-        public FiniteAutomataStructureDto EvaluateFromInstructions(InstructionsInput input)
+        public async Task<FiniteAutomataEvaluationDTO> EvaluateFromInstructions(IConfiguration configuration,InstructionsInput input)
         {
-            this.structure = input.BuildStructure();
-            return new FiniteAutomataStructureDto(this.structure);
+            this.structure = new FiniteAutomataStructure(input);
+            if (!structure.IsDFA)
+            {
+                structure.BuildDFA();
+                await structure.GenerateDFAInstructions(configuration);
+            }
+            return new FiniteAutomataEvaluationDTO(this.structure);
         }
         
-        public TestsEvaluationResultDTO EvaluateTestCases(TestsInput input)
+        public TestsEvaluationResult EvaluateTestCases(TestsInput input)
         {
-            return new TestsEvaluationResultDTO(this.structure.ProcessTestsEvaluation(input),structure.IsDFA,true);
+            return this.structure.EvaluateTests(input);
+        }
+
+        public bool CheckWord(string word)
+        {
+            return this.structure.WordExists(word);
         }
     }
 }

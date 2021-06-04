@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace logic.FiniteAutomataService.Models
+namespace logic.FiniteAutomataService.Constants
 {
     public static class TestCase
     {
         public const string UNKNOWN = "";
-        public const string DFA = "dfa";
-        public const string FINITE = "finite";
-        public const string WORDS = "words";
-        public const string END = "end.";
+        public const string DFA = "(?<=dfa:)(.*?)\n|\r|\r\n";
+        public const string FINITE = "(?<=finite:)(.*?)\n|\r|\r\n";
+        public const string WORDS = "(?<=words:)(\\s.*?)*(?=end.)";
         public const string TEST_GUESS_TRUE = "y";
         public const string TEST_GUESS_FALSE = "n";
         public const string CASE_DELIMETER = ":";

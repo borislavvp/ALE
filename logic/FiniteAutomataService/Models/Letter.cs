@@ -6,7 +6,7 @@ using System.Text;
 
 namespace logic.FiniteAutomataService.Models
 {
-    public class Letter: ILetter, IComparable<ILetter>
+    public class Letter: ILetter
     {
         public char Value { get; set; }
         public bool IsEpsilon => this.Value.Equals(Alphabet.EPSILON_LETTER.Value);
@@ -28,9 +28,5 @@ namespace logic.FiniteAutomataService.Models
             return hashCode;
         }
 
-        public int CompareTo([AllowNull] ILetter other)
-        {
-            return this.IsEpsilon ? -1 : this.Value.CompareTo(other.Value);
-        }
     }
 }

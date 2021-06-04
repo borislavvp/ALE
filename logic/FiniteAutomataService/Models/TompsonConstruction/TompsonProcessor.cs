@@ -100,9 +100,6 @@ namespace logic.FiniteAutomataService.Models.TompsonConstruction
             pair2.CurrentInitial.Initial = false;
             pair2.CurrentFinal.Final = false;
 
-            newInitialState.Directions.Add(pair1.CurrentInitial, new HashSet<ILetter>() { Alphabet.EPSILON_LETTER });
-            newInitialState.Directions.Add(pair2.CurrentInitial, new HashSet<ILetter>() { Alphabet.EPSILON_LETTER }); 
-            
             var newExtendedConnection = new State(++latestId, "", false,true);
 
             if (pair1.CurrentExtendedConnection != null && pair1.CurrentFinal.Directions.ContainsKey(pair1.CurrentExtendedConnection))
@@ -114,10 +111,13 @@ namespace logic.FiniteAutomataService.Models.TompsonConstruction
 
             if (pair2.CurrentExtendedConnection != null && pair2.CurrentFinal.Directions.ContainsKey(pair2.CurrentExtendedConnection))
             {
-                structure.States.Remove(pair1.CurrentExtendedConnection);
+                structure.States.Remove(pair2.CurrentExtendedConnection);
                 pair2.CurrentFinal.Directions.Remove(pair2.CurrentExtendedConnection);
             }
             pair2.CurrentFinal.Directions.Add(newExtendedConnection, new HashSet<ILetter>() { Alphabet.EPSILON_LETTER });
+
+            newInitialState.Directions.Add(pair1.CurrentInitial, new HashSet<ILetter>() { Alphabet.EPSILON_LETTER });
+            newInitialState.Directions.Add(pair2.CurrentInitial, new HashSet<ILetter>() { Alphabet.EPSILON_LETTER });
 
             structure.States.Add(newExtendedConnection);
             structure.States.Add(newInitialState);

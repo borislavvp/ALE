@@ -24,19 +24,6 @@ namespace logic.FiniteAutomataService.DTO
             };
         }
 
-        public override bool Equals(object obj)
-        {
-            return obj is StateDTO state && this.Id.Equals(state.Id);
-        }
-
-        public override int GetHashCode()
-        {
-            int hashCode = -157375006;
-            hashCode = hashCode * -1521134295 + this.Id;
-            hashCode = hashCode * -1521134295 + this.Id;
-            return hashCode;
-        }
-
         public int CompareTo([DisallowNull] StateDTO other)
         {
             return this.Initial 

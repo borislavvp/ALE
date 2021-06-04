@@ -1,5 +1,6 @@
 ﻿using logic.FiniteAutomataService.Models;
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace logic.FiniteAutomataService.Interfaces
@@ -11,5 +12,7 @@ namespace logic.FiniteAutomataService.Interfaces
         bool Final { get; set; }
         string Value { get; }
         Directions Directions { get; set; }
+        HashSet<IState> FindEpsilonClosures();
+        bool CanReachStates(HashSet<IState> stateToReach);
     }
 }

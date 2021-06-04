@@ -6,6 +6,6 @@ namespace logic.FiniteAutomataService.DTO
 {
     public class TestsInput
     {
-        public string words { get; set; }
+        public string value { get; set; }
     }
 }

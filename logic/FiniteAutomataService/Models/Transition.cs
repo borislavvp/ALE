@@ -19,5 +19,17 @@ namespace logic.FiniteAutomataService.Models
             this.To = To;
             this.Value = Value;
         }
+        public override bool Equals(object obj)
+        {
+            return obj is Transition transition && this.From.Equals(transition.From) && this.To.Equals(transition.To);
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = -157375006;
+            hashCode = hashCode * -1521134295 + this.From.Id + this.To.Id;
+            hashCode = hashCode * -1521134295 + this.From.Id + this.To.Id;
+            return hashCode;
+        }
     }
 }
