@@ -10,7 +10,7 @@ export function withFileManager() {
                     if (event.target?.result) {
                         const lines = `${event.target.result}`.split('\n');
                         console.log(lines)
-                        finiteAutomataService.evaluateInstructions(`${event.target.result}`);
+                        // finiteAutomataService.evaluateInstructions(`${event.target.result}`);
                         // readInstructions(lines);
                         resolve(`${event.target.result}`);
                     }

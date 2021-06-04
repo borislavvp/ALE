@@ -1,24 +1,23 @@
 <template>
-  <div class="w-64 flex justify-between flex-col ">
-    <img :src="AutomataImg" class="hidden" />
-    <img :src="initialAutomataImg" class="hidden" />
-    <img :src="finalAutomataImg" class="hidden" />
-    <instructions-selector></instructions-selector>
+  <div class="w-64 flex justify-between flex-col">
+    <instructions-selector
+      @OnInstructionLoaded="readFile"
+    ></instructions-selector>
     <textarea
       id="instructions"
       name="instructions"
       rows="3"
       v-model="instructionsLoaded"
-      class="resize-none shadow-lg p-2 flex-auto focus:outline-none border-4 focus:border-blue-300  max-h-64 overscroll-y-auto  mt-1 block w-full sm:text-sm border-gray-200 rounded-md"
+      class="resize-none shadow-lg p-2 flex-auto focus:outline-none focus:shadow-inner focus:bg-gray-200 border max-h-64 overscroll-y-auto mt-1 block w-full sm:text-sm border-gray-200 rounded-md"
       placeholder="Automata instructions"
     ></textarea>
     <div class="flex flex-col w-64 py-6 items-center bg-grey-lighter">
       <label
-        class="flex items-center hover:bg-gray-100 justify-start w-full px-6 py-2 bg-white text-gray-700 rounded-lg shadow-lg tracking-wide uppercase border cursor-pointer hover:text-blue-600"
+        class="flex items-center hover:bg-gray-100 justify-start w-full px-6 py-2 bg-white text-gray-700 rounded-lg shadow-lg tracking-wide uppercase  cursor-pointer "
       >
         <span class="flex items-center mr-4">
           <svg
-            class="w-8 h-8 fill-current text-green-700"
+            class="w-8 h-8 fill-current text-yellow-700"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -29,7 +28,7 @@
             />
           </svg>
         </span>
-        <span class="flex  leading-normal">Save file</span>
+        <span class="flex leading-normal">Save file</span>
         <input
           type="file"
           class="hidden"
@@ -38,11 +37,11 @@
         />
       </label>
       <label
-        class="flex items-center hover:bg-gray-100  justify-start w-full mt-4 px-6 py-2 bg-white text-gray-700 rounded-lg shadow-lg tracking-wide uppercase border cursor-pointer hover:text-blue-600"
+        class="flex items-center hover:bg-gray-100 justify-start w-full mt-4 px-6 py-2 bg-white text-gray-700 rounded-lg shadow-lg tracking-wide uppercase  cursor-pointer "
       >
         <span class="flex items-center mr-4">
           <svg
-            class="w-8 h-8 fill-current text-blue-500"
+            class="w-8 h-8 fill-current text-yellow-500"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -73,51 +72,46 @@
   export default defineComponent({
     components: { InstructionsSelector },
     setup() {
-      const finalAutomataImg = (new Image().src = `${process.env.BASE_URL}FinalAutomata.svg`);
-      const initialAutomataImg = (new Image().src = `${process.env.BASE_URL}InitialAutomata.svg`);
-      const AutomataImg = (new Image().src = `${process.env.BASE_URL}Automata.svg`);
       const automataProvider = withFiniteAutomataProvider();
       const instructionsLoaded = ref("");
-      const network = ref({});
 
       const fileManager = withFileManager();
-      const readFile = (event: any) =>
-        fileManager.readFile(event.target.files[0]).then(res => {
-          instructionsLoaded.value = res;
-        });
-      // .then(() => automataProvider.evaluate(instructionsLoaded.value))
-      // .then(() =>
-      //   withAutomataGraph(automataProvider.evaluation.value).showGraph()
-      // );
+
+      const readFile = (event: any) => {
+        console.log(event);
+        fileManager
+          .readFile(event.target ? event.target.files[0] : event)
+          .then(res => {
+            instructionsLoaded.value = res;
+          });
+      };
+
       const evaluateInstructions = debounce(
-        (instructions: string, words: string) =>
+        (instructions: string, words: string) => {
+          const graphProvider = withAutomataGraph();
+          graphProvider.clearGraph();
           automataProvider
             .evaluate(instructions)
-            .then(
-              () =>
-                (network.value = withAutomataGraph().showGraph(
-                  automataProvider.evaluation.value
-                ))
+            .then(() =>
+              graphProvider.showGraph(automataProvider.evaluation.value.Original)
             )
-            .then(() => automataProvider.checkWords(words))
-            .catch(err => console.log(err)),
-        200
+            .then(() => automataProvider.evaluateTests(words))
+            .catch(err => console.log(err));
+        },
+        400
       );
+
       watch(instructionsLoaded, changedInstructions => {
-        const parsed = changedInstructions.split("end.");
-        console.log(parsed);
+        const parsed = changedInstructions.split("---");
         const instructions = parsed[0].replaceAll("\r", "");
         const words = parsed[1].replaceAll("\r", "");
         evaluateInstructions(instructions, words);
       });
+
       return {
         automataProvider,
         readFile,
-        network,
-        instructionsLoaded,
-        initialAutomataImg,
-        AutomataImg,
-        finalAutomataImg
+        instructionsLoaded
       };
     }
   });

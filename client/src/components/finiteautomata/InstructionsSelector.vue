@@ -1,40 +1,61 @@
 <template>
   <div class="mb-4 relative">
-    <select
-      @change="evaluateInstructions"
-      class="shadow-md text-gray-700 px-4 py-2 rounded block w-full focus:outline-none appearance-none border-2 focus:border-blue-400"
+    <label class="tex-sm text-gray-800 font-semibold"
+      >Select instructions</label
     >
-      <option
-        v-for="instruction in instructionsArray"
-        :key="instruction.title"
-        >{{ instruction.title }}</option
-      >
+    <select
+      @change="OnInstructionChanged"
+      class="cursor-pointer shadow-md text-gray-700 px-4 py-2 rounded block w-full focus:outline-none appearance-none focus:bg-gray-200 focus:shadow-inner"
+    >
+      <option v-for="instruction in instructionsArray" :key="instruction.title">
+        {{ instruction.title }}
+      </option>
     </select>
+    <svg
+      class="absolute pointer-events-none right-0 -mt-8 mr-4 h-6 w-6 fill-current text-gray-700 "
+      viewBox="0 0 12 12"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M2.14592 4.64592C2.19236 4.59935 2.24754 4.56241 2.30828 4.5372C2.36903 4.512 2.43415 4.49902 2.49992 4.49902C2.56568 4.49902 2.63081 4.512 2.69155 4.5372C2.7523 4.56241 2.80747 4.59935 2.85392 4.64592L5.99992 7.79292L9.14592 4.64592C9.2398 4.55203 9.36714 4.49929 9.49992 4.49929C9.63269 4.49929 9.76003 4.55203 9.85392 4.64592C9.9478 4.7398 10.0005 4.86714 10.0005 4.99992C10.0005 5.13269 9.9478 5.26003 9.85392 5.35392L6.35392 8.85392C6.30747 8.90048 6.2523 8.93742 6.19155 8.96263C6.13081 8.98784 6.06568 9.00081 5.99992 9.00081C5.93415 9.00081 5.86903 8.98784 5.80828 8.96263C5.74754 8.93742 5.69236 8.90048 5.64592 8.85392L2.14592 5.35392C2.09935 5.30747 2.06241 5.2523 2.0372 5.19155C2.012 5.13081 1.99902 5.06568 1.99902 4.99992C1.99902 4.93415 2.012 4.86903 2.0372 4.80828C2.06241 4.74754 2.09935 4.69236 2.14592 4.64592V4.64592Z"
+      />
+    </svg>
   </div>
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref } from "@vue/composition-api";
-
+  import { defineComponent, onMounted, ref } from "@vue/composition-api";
+  import { EsModuleComponent } from "vue/types/options";
+  import { predefinedInstructions } from "@/providers/finiteautomata/utils/predefinedInstructions";
   export default defineComponent({
     setup(_, context) {
-      const instructionsArray = ref([
-        {
-          title: "Epsilon Loop",
-          src: "../../EpsilonLoop.txt"
-        }
-      ]);
+      const instructionsArray = ref(predefinedInstructions);
 
-      const evaluateInstructions = (event: any) => {
-        context.emit(
-          "OnInstructionLoaded",
-          instructionsArray.value.find(i => i.title === event.target.value)?.src
-        );
+      const chageInstructions = (instructionTitle: string) => {
+        const getFileContent = instructionsArray.value.find(
+          i => i.title === instructionTitle
+        )?.src;
+        getFileContent?.()
+          .then((content: EsModuleComponent) => {
+            const blob = new Blob([content.default as string], {
+              type: "text/plain"
+            });
+            const file = new File([blob], "EpsilonLoop.txt", {
+              type: "text/plain"
+            });
+            context.emit("OnInstructionLoaded", file);
+          })
+          .catch(e => console.log(e));
       };
+      const OnInstructionChanged = (event: any) =>
+        chageInstructions(event.target.value);
+
+      onMounted(() => chageInstructions(instructionsArray.value[0].title));
 
       return {
         instructionsArray,
-        evaluateInstructions
+        OnInstructionChanged
       };
     }
   });

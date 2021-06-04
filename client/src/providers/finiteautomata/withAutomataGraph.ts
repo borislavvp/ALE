@@ -1,120 +1,59 @@
 import { DataInterfaceEdges, DataInterfaceNodes, Edge, Network, Node } from "vis-network/peer/esm/vis-network";
 import { DataSet } from "vis-data/peer/esm/vis-data";
-import { reactive, Ref, ref } from "@vue/composition-api";
-import { FiniteAutomataEvaluation } from "@/types/finiteautomata/FiniteAutomataEvaluation";
+import { reactive,  ref } from "@vue/composition-api";
+import { FiniteAutomataEvaluation, GraphValues } from "@/types/finiteautomata/FiniteAutomataEvaluation";
 import { State } from "@/types/finiteautomata/State";
 import { Transition } from "@/types/finiteautomata/Transition";
 
-const finalAutomataImg = new Image().src = `${process.env.BASE_URL}FinalAutomata.svg`
-const initialAutomataImg = new Image().src = `${process.env.BASE_URL}InitialAutomata.svg`
-const AutomataImg = new Image().src = `${process.env.BASE_URL}Automata.svg`
+import Viz from 'viz.js';
+import { Module, render } from 'viz.js/full.render.js';
 
-const network = ref({} as Network);
-
-const graphData = reactive({
-    nodes: new DataSet() as DataInterfaceNodes,
-    edges: new DataSet() as DataInterfaceEdges,
-    options: {}
-});
+const GRAPH_CONTAINER_ID = "finiteAutomatagraph";
+const GRAPH_ID = "graph";
   
-const selfReferencedEdges = ref<number[]>([]);
 export const withAutomataGraph = () => {
-  const getOptions = () => ({
-    interaction: {
-        // dragNodes:true,
-        // dragView: true,
-        hover: true,
-        // hoverConnectedEdges: true,
-        // selectConnectedEdges: true,
-        // zoomView: true    
-      },
-     layout: {
-        hierarchical: {
-            direction: "LR",
-            sortMethod: "directed",
-            nodeSpacing: 200,
-            treeSpacing: 200
-        }
-    },
-      physics: {
-        enabled:false,
-      },
-      nodes: {
-        font: {
-          size: 25,
-          strokeWidth: 1,
-          strokeColor: "#404040",
-          align: "center"
-        },
-        shadow: {
-          enabled: true,
-          color: "#003300",
-          x: 0
-        }
-      },
-      edges: {
-        length:500,
-        color: {
-          color: "#26734d",
-          highlight: "#3399ff",
-          hover: "#39ac73"
-        },
-      // smooth: { type: "cubicBezier" },
+  const clearGraph = () => {
+    const container = document.getElementById(GRAPH_CONTAINER_ID);
+    const graph = document.getElementById(GRAPH_ID);
+    if (container !== null && graph !== null) {
+      graph.setAttribute("class","opacity-50")
     }
-  })
-  const getNodes = (data: State[]) => data.map((n, index) => ({
-        id: n.Id,
-        label: n.Value,
-        level: index,
-        text:n.Value,
-        shape: "image", image: n.Final ? finalAutomataImg : n.Initial ? initialAutomataImg : AutomataImg,
-  }))
-  
-  const getEdges = (data: Transition[]) =>  data.map((e, _index) => {
-        e.From.Value === e.To.Value && selfReferencedEdges.value.push(e.From.Id);
-        return {
-          id: e.Id,
-          from: e.From.Id,
-          to: e.To.Id,
-          label: e.Value.Value,
-          smooth: {
-            enabled: true,
-            roundness: _index % 2 == 0 ? (e.From.Id - e.To.Id) / 25 + 0.5 : -(e.From.Id - e.To.Id) / 25 - 0.5,
-            type: 'curvedCW'
-          },
-          arrows: {
-            to: {
-              enabled: e.To.Id !== e.From.Id
-            }
-          },
-          font: {
-            size: 25,
-            strokeWidth: 1,
-            strokeColor: "#404040",
-            align: "center"
-          },
-          selfReference: {
-            size: e.From.Id === e.To.Id ? selfReferencedEdges.value.filter(s => s === e.From.Id).length * 15 : 15,
-          }
-        }
-      })
+  }
+  const showGraph = (data: GraphValues) => {
 
-  const showGraph = (data: FiniteAutomataEvaluation) => {
-    selfReferencedEdges.value = []
-    const container = document.getElementById("automataGraph");
-    graphData.nodes = new DataSet(getNodes(data.States))
-    graphData.edges = new DataSet(getEdges(data.Transitions));
-    graphData.options = getOptions();
-      network.value = container
-        ? new Network(
-          container,
-          { nodes: graphData.nodes, edges: graphData.edges },
-          graphData.options
-        )
-      : {} as Network;
-   
-   
-    return network;
+    let viz = new Viz({ Module, render });
+    const initialNode = data.States.find(n => n.Initial);
+
+    const nodes = data.States.map(s =>
+      `"${s.Id}" [${s.Value === ''
+        ? 'label=""'
+        : `label="${s.Value}"`} ${s.Final ? 'fontcolor=goldenrod3 shape=doublecircle color=goldenrod2'
+                                          : s.Initial ? 'color=chocolate4 fontcolor=chocolate4'
+                                            : 'color=gray25 fontcolor=gray10'}]`)
+    
+    const edges = data.Transitions.map(t => 
+      `"${t.From.Id}" -> "${t.To.Id}" [label="${t.Value.Value}" ${t.From.Id === t.To.Id ? 'color=forestgreen' : 'color=gray24'}]`);
+    
+    const graph = `digraph "Graph" {
+          rankdir=LR;
+          node [shape="circle" ];
+          "initial" [label= "", shape=point color=chocolate4]
+          ${nodes.join('\n  ')}
+          "initial" -> "${initialNode !== undefined ? initialNode.Id : '_'}" [color=chocolate4]
+          ${edges.join('\n  ')}
+        }`;
+    
+    viz.renderSVGElement(graph)
+      .then(result => {
+        result.setAttribute("id", GRAPH_ID);
+        const container = document.getElementById(GRAPH_CONTAINER_ID);
+        const graph = document.getElementById(GRAPH_ID);
+        container?.contains(graph) ? graph?.replaceWith(result) : container?.appendChild(result)
+      })
+      .catch(error => {
+        viz = new Viz({ Module, render });
+        console.error(error);
+      });
   };
-  return { showGraph };
+  return { showGraph,clearGraph };
 }
