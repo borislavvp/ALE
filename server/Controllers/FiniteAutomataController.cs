@@ -26,11 +26,11 @@ namespace server.Controllers
 
         [HttpPost]
         [Route("evaluate")]
-        public async Task<ActionResult<FiniteAutomataEvaluationDTO>> EvaluateInstructions([FromBody] InstructionsInput input)
+        public ActionResult<FiniteAutomataEvaluationDTO> EvaluateInstructions([FromBody] InstructionsInput input)
         {
             try
             {
-                return Ok(await _service.EvaluateFromInstructions(configuration,input));
+                return Ok(_service.EvaluateFromInstructions(configuration,input));
             }
             catch (Exception e)
             {

@@ -7,7 +7,7 @@ namespace logic.FiniteAutomataService.DTO
 {
     public class FiniteAutomataEvaluationDTO
     {
-        public string DFAInstructionsID { get; set; }
+        public string DFAInstructions { get; set; }
         public FiniteAutomataStructureDto DFA { get; set; }
         public FiniteAutomataStructureDto Original { get; set; }
 
@@ -15,7 +15,7 @@ namespace logic.FiniteAutomataService.DTO
         {
             this.DFA = structure.IsDFA ? null : new FiniteAutomataStructureDto(structure.DFA);
             this.Original = new FiniteAutomataStructureDto(structure.States);
-            this.DFAInstructionsID = structure.DFAInstructionsID;
+            this.DFAInstructions = structure.DFAInstructions;
         }
     }
 }

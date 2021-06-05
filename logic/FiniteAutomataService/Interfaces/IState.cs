@@ -12,7 +12,10 @@ namespace logic.FiniteAutomataService.Interfaces
         bool Final { get; set; }
         string Value { get; }
         Directions Directions { get; set; }
-        HashSet<IState> FindEpsilonClosures();
+        bool CheckWord(string word);
         bool CanReachStates(HashSet<IState> stateToReach);
+        HashSet<IState> FindEpsilonClosures();
+        HashSet<string> GetAllPossibleWords();
+        HashSet<IState> GetAllSelfReferencedStates();
     }
 }

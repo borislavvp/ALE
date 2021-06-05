@@ -11,7 +11,7 @@ namespace logic.FiniteAutomataService.Interfaces
     public interface IFiniteAutomataService
     {
         IFiniteAutomataStructure structure { get; set; }
-        Task<FiniteAutomataEvaluationDTO> EvaluateFromInstructions(IConfiguration configuration,InstructionsInput input);
+        FiniteAutomataEvaluationDTO EvaluateFromInstructions(IConfiguration configuration,InstructionsInput input);
         TestsEvaluationResult EvaluateTestCases(TestsInput input);
         bool CheckWord(string word);
     }

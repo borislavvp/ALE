@@ -14,13 +14,13 @@ namespace logic.FiniteAutomataService
     {
         public IFiniteAutomataStructure structure { get; set; }
 
-        public async Task<FiniteAutomataEvaluationDTO> EvaluateFromInstructions(IConfiguration configuration,InstructionsInput input)
+        public FiniteAutomataEvaluationDTO EvaluateFromInstructions(IConfiguration configuration,InstructionsInput input)
         {
             this.structure = new FiniteAutomataStructure(input);
             if (!structure.IsDFA)
             {
                 structure.BuildDFA();
-                await structure.GenerateDFAInstructions(configuration);
+                structure.GenerateDFAInstructions(configuration);
             }
             return new FiniteAutomataEvaluationDTO(this.structure);
         }

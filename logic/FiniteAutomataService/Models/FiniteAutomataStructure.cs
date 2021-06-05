@@ -19,7 +19,7 @@ namespace logic.FiniteAutomataService.Models
     public class FiniteAutomataStructure : IFiniteAutomataStructure
     {
         public HashSet<IState> DFA { get; set; }
-        public string DFAInstructionsID { get; set; }
+        public string DFAInstructions { get; set; }
         public HashSet<IState> States { get; set; }
         public IAlphabet StructureAlphabet { get; set; }
         public bool IsDFA { get => this.CheckDFA();}
@@ -57,11 +57,16 @@ namespace logic.FiniteAutomataService.Models
             }
             foreach (var state in this.States)
             {
+                var temp = new HashSet<ILetter>();
                 foreach (var values in state.Directions.Values)
                 {
-                    if (!values.SetEquals(this.StructureAlphabet.Letters)){
-                        return false;
+                    foreach (var letter in values)
+                    {
+                        temp.Add(letter);
                     }
+                }
+                if (!temp.SetEquals(this.StructureAlphabet.Letters)){
+                    return false;
                 }
             }
             return true;
@@ -69,7 +74,7 @@ namespace logic.FiniteAutomataService.Models
 
         private bool CheckFinite()
         {
-            var selfReferencedStates = this.States.Where(s => s.Directions.ContainsKey(s) && s.Directions[s].Where(l => !l.IsEpsilon).Count() > 0);
+            var selfReferencedStates = this.GetInitialState().GetAllSelfReferencedStates();
             foreach (var state in selfReferencedStates)
             {
                 if (state.CanReachStates(GetFinalStates()))
@@ -87,35 +92,39 @@ namespace logic.FiniteAutomataService.Models
             return true;
         }
 
-        public async Task GenerateDFAInstructions(IConfiguration configuration)
+        public void GenerateDFAInstructions(IConfiguration configuration)
         {
             try
             {
-                string directoryPath = "./instructions/";
-                string instructionsID = Guid.NewGuid().ToString()+ ".txt";
-                string localFilePath = Path.Combine(directoryPath, instructionsID);
+                //string directoryPath = "./instructions/";
+                //string instructionsID = Guid.NewGuid().ToString()+ ".txt";
+                //string localFilePath = Path.Combine(directoryPath, instructionsID);
 
-                string alphabet = "alphabet:";
+                string alphabet = "alphabet: ";
                 foreach (var letter in this.StructureAlphabet.Letters)
                 {
                     if (!letter.IsEpsilon)
                     {
-                        alphabet += $@"{letter.Value},";
+                        alphabet += $@"{letter.Value}";
                     }
                 }
 
-                alphabet = alphabet.Trim(',');
-
-                string states = "states:";
-                foreach (var state in this.States)
+                string states = "states: ";
+                string finalStates = "final: ";
+                foreach (var state in this.DFA)
                 {
                     states += state.Value + ',';
+                    if (state.Final)
+                    {
+                        finalStates += state.Value + ',';
+                    }
                 }
                 states = states.Trim(',');
+                finalStates = finalStates.Trim(',');
 
-                string transitions = "transitions:";
+                string transitions = "transitions: ";
                 transitions += Environment.NewLine;
-                foreach (var state in this.States)
+                foreach (var state in this.DFA)
                 {
                     foreach (var direction in state.Directions)
                     {
@@ -132,6 +141,8 @@ namespace logic.FiniteAutomataService.Models
                     + Environment.NewLine
                     + states
                     + Environment.NewLine
+                    + finalStates
+                    + Environment.NewLine
                     + transitions
                     + Environment.NewLine;
 
@@ -141,11 +152,11 @@ namespace logic.FiniteAutomataService.Models
                 instructions += Environment.NewLine;
                 instructions += "finite:" + (this.IsFinite ? 'y' : 'n');
 
-                FileHelper.CreateFile(directoryPath, localFilePath, instructions);
-                await BlobHelper.PublishFile(configuration, instructionsID, localFilePath);
+                //FileHelper.CreateFile(directoryPath, localFilePath, instructions);
+                //await BlobHelper.PublishFile(configuration, instructionsID, localFilePath);
 
-                FileHelper.DeleteFiles(directoryPath);
-                this.DFAInstructionsID = instructionsID;
+                //FileHelper.DeleteFiles(directoryPath);
+                this.DFAInstructions = instructions;
             }
 
             catch (Exception Ex)
@@ -159,6 +170,10 @@ namespace logic.FiniteAutomataService.Models
             TestsEvaluationResult result = new TestsEvaluationResult();
             result.IsDFA = new TestInputAnswer(input.GetDFATestCase(), this.IsDFA);
             result.IsFinite = new TestInputAnswer(input.GetFiniteTestCase(), this.IsFinite);
+            if (result.IsFinite.Answer)
+            {
+                result.AllPossibleWords = this.GetInitialState().GetAllPossibleWords();
+            }
             var words = input.GetWordsTestCase();
             foreach (var wordTestCase in words)
             {
@@ -178,12 +193,9 @@ namespace logic.FiniteAutomataService.Models
 
         public bool WordExists(string word)
         {
-            var traversed = new HashSet<IState>() { this.GetInitialState() };
-            return traversed.CheckWordExistenceWithDirections(
-                this.GetInitialState(),
-                word,
-                0);
+            return this.GetInitialState().CheckWord(word);
         }
+
         public void BuildStructureFromRegex(string regex)
         {
             Stack<TompsonInitialFinalStatesHelperPair> processedValues = new Stack<TompsonInitialFinalStatesHelperPair>();

@@ -11,7 +11,7 @@ namespace logic.FiniteAutomataService.Interfaces
     public interface IFiniteAutomataStructure
     {
         HashSet<IState> DFA { get; set; }
-        string DFAInstructionsID { get; set; }
+        string DFAInstructions { get; set; }
         bool IsDFA { get; }
         bool IsFinite { get; }
         IAlphabet StructureAlphabet { get; set; }
@@ -21,6 +21,6 @@ namespace logic.FiniteAutomataService.Interfaces
         bool WordExists(string word);
         void BuildStructureFromRegex(string regex);
         void BuildDFA();
-        Task GenerateDFAInstructions(IConfiguration configuration);
+        void GenerateDFAInstructions(IConfiguration configuration);
     }
 }

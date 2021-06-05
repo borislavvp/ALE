@@ -119,45 +119,43 @@ namespace logic.FiniteAutomataService.Extensions
             }
             return statesInALoop;
         }
-        public static bool CheckWordExistenceWithDirections(this HashSet<IState> traversed, IState state, string word, int letterToCheck)
+        
+        public static HashSet<string> GatherAllPossibleWords(this HashSet<IState> traversed,
+            HashSet<string> words, string currentWord, IState state)
         {
-            traversed.Add(state);
-
             foreach (var direction in state.Directions)
             {
-                if (letterToCheck < word.Length && direction.Value.Contains(new Letter(word[letterToCheck])))
+                if (!traversed.Contains(direction.Key))
                 {
-                    if (CheckWordExistenceWithDirections(traversed, direction.Key, word, letterToCheck + 1))
+                    traversed.Add(direction.Key);
+                    foreach (var letter in direction.Value)
                     {
-                        traversed.Remove(state);
-                        return true;
-                    }
-                }
-                else if (
-                    direction.Value.Contains(Alphabet.EPSILON_LETTER) && !traversed.Contains(direction.Key))
-                {
-                    if (CheckWordExistenceWithDirections(traversed, direction.Key, word, letterToCheck))
-                    {
-                        traversed.Remove(state);
-                        return true;
+                        if (!letter.IsEpsilon)
+                        {
+                            currentWord += letter.Value;
+                        }
+                        GatherAllPossibleWords(traversed, words, currentWord, direction.Key);
                     }
                 }
             }
-
+            if (state.Final)
+            {
+                words.Add(currentWord);
+            }
             traversed.Remove(state);
-            return state.Final && letterToCheck >= word.Length;
+            return words;
         }
         public static IState BuildNewState(this HashSet<IState> states)
         {
             int newId = 0;
-            string newValue = "";
+            string newValue = "(";
             foreach (var state in states)
             {
                 newId += state.Id;
-                newValue += state.Value + ",";
+                newValue += state.Value + "-";
             }
 
-            return new State(newId, newValue.Trim(','), false, states.Where(s => s.Final).Count() > 0);
+            return new State(newId, newValue.Trim('-')+")", false, states.Where(s => s.Final).Count() > 0);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using logic.FiniteAutomataService.Interfaces;
+﻿using logic.FiniteAutomataService.Extensions;
+using logic.FiniteAutomataService.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -125,5 +126,92 @@ namespace logic.FiniteAutomataService.Models
             }
             return closures;
         }
+
+       public HashSet<string> GetAllPossibleWords()
+       {
+            return new HashSet<IState>().GatherAllPossibleWords(new HashSet<string>(),"",this);
+       }
+       public HashSet<IState> GetAllSelfReferencedStates()
+       {
+            var selfReferenced = new HashSet<IState>();
+            var traversed = new HashSet<IState>();
+            Queue<IState> queue = new Queue<IState>();
+            queue.Enqueue(this);
+            while (queue.Count > 0)
+            {
+                foreach (var direction in queue.Peek().Directions)
+                {
+                    if (!traversed.Contains(direction.Key))
+                    {
+                        if (direction.Key.Equals(queue.Peek())){ 
+                            foreach (var letter in direction.Value)
+                            {
+                                if (!letter.IsEpsilon)
+                                {
+                                    selfReferenced.Add(queue.Peek());
+                                    break;
+                                }
+                            }
+                        }
+                        traversed.Add(queue.Peek());
+                        queue.Enqueue(direction.Key);
+                    }
+                }
+                queue.Dequeue();
+            }
+            return selfReferenced;
+       }
+        public bool CheckWord(string word)
+        {
+            return this.CheckWordWithDirections(new Dictionary<WordCheckerTransitionKey, HashSet<IState>>(), this, word, 0);
+        }
+
+        private bool CheckWordWithDirections(Dictionary<WordCheckerTransitionKey, HashSet<IState>> tracker,
+            IState state, string word, int fromLetter)
+        {
+            foreach (var direction in state.Directions)
+            {
+                var currentTransition = new WordCheckerTransitionKey(state, fromLetter);
+                if (fromLetter < word.Length &&
+                    (!tracker.ContainsKey(currentTransition) ||
+                    !tracker[currentTransition].Contains(direction.Key)) &&
+                     direction.Value.Contains(new Letter(word[fromLetter])))
+                {
+                    if (tracker.ContainsKey(currentTransition))
+                    {
+                        tracker[currentTransition].Add(direction.Key);
+                    }
+                    else
+                    {
+                        tracker.Add(currentTransition, new HashSet<IState>() { direction.Key });
+                    }
+                    if (CheckWordWithDirections(tracker, direction.Key, word, fromLetter + 1))
+                    {
+                        return true;
+                    }
+                }
+                else if (
+                    direction.Value.Contains(Alphabet.EPSILON_LETTER) &&
+                    (!tracker.ContainsKey(currentTransition) ||
+                    !tracker[currentTransition].Contains(direction.Key)))
+                {
+                    if (tracker.ContainsKey(currentTransition))
+                    {
+                        tracker[currentTransition].Add(direction.Key);
+                    }
+                    else
+                    {
+                        tracker.Add(currentTransition, new HashSet<IState>() { direction.Key });
+                    }
+                    if (CheckWordWithDirections(tracker, direction.Key, word, fromLetter))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return state.Final && fromLetter >= word.Length;
+        }
+
     }
 }
