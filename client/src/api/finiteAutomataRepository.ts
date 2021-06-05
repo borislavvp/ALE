@@ -1,4 +1,5 @@
 import { FiniteAutomataEvaluation } from "@/types/finiteautomata/FiniteAutomataEvaluation";
+import { TestCasesEvaluation } from "@/types/finiteautomata/TestCasesEvaluation";
 import axios from "axios";
 const instance = axios.create({
   baseURL:
@@ -24,20 +25,37 @@ export const finiteAutomataService = {
         });
     });
   },
-  evaluateWords(words: string): Promise<FiniteAutomataEvaluation> {
+  evaluateTestCases(value: string): Promise<TestCasesEvaluation> {
     return new Promise(resolve => {
       instance
-        .post('/api/finiteautomata/words',{words})
+        .post('/api/finiteautomata/tests',{value})
         .then(result => {
           if (result.status === 200) {
             resolve(result.data);
           } else {
-            resolve({} as FiniteAutomataEvaluation);
+            resolve({} as TestCasesEvaluation);
           }
         })
         .catch(err => {
           console.log(err);
-          resolve({} as FiniteAutomataEvaluation);
+          resolve({} as TestCasesEvaluation);
+        });
+    });
+  },
+  checkWord(word: string): Promise<boolean> {
+    return new Promise(resolve => {
+      instance
+        .post(`/api/finiteautomata/check?word=${word}`)
+        .then(result => {
+          if (result.status === 200) {
+            resolve(result.data);
+          } else {
+            resolve(false);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          resolve(false);
         });
     });
   }
