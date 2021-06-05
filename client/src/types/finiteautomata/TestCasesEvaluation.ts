@@ -11,5 +11,6 @@ export interface TestCasesEvaluation {
         TestGuess:boolean,
         Answer: boolean,
         Word:string
-    }[]
+    }[],
+    AllPossibleWords:string[]
 }

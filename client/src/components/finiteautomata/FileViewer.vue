@@ -1,23 +1,37 @@
 <template>
-  <div class="w-64 flex justify-between flex-col">
+  <div class="w-64 flex justify-between relative flex-col">
     <instructions-selector
       @OnInstructionLoaded="readFile"
     ></instructions-selector>
+
     <textarea
       id="instructions"
       name="instructions"
       rows="3"
-      v-model="instructionsLoaded"
-      class="resize-none shadow-lg p-2 flex-auto focus:outline-none focus:shadow-inner focus:bg-gray-200 border max-h-64 overscroll-y-auto mt-1 block w-full sm:text-sm border-gray-200 rounded-md"
+      :value="instructionsLoaded"
+      @input="changeInstructions"
+      :class="{ 'text-indigo-600': IsDFAVisible }"
+      class="resize-none shadow-lg p-2 flex-auto focus:outline-none text-gray-800 font-semibold focus:shadow-inner transition-default duration-500 
+      focus:bg-gray-200 max-h-64 overscroll-y-auto mt-1 block w-full sm:text-sm border-gray-200 rounded-md"
       placeholder="Automata instructions"
-    ></textarea>
-    <div class="flex flex-col w-64 py-6 items-center bg-grey-lighter">
-      <label
-        class="flex items-center hover:bg-gray-100 justify-start w-full px-6 py-2 bg-white text-gray-700 rounded-lg shadow-lg tracking-wide uppercase  cursor-pointer "
+    >
+    </textarea>
+    <div
+      class="flex w-64 justify-between items-center"
+      :class="[IsDFAVisible ? 'pt-10' : 'pt-6']"
+    >
+      <span
+        v-show="IsDFAVisible"
+        class="z-10 -mt-24 text-center transition-default duration-500 text-base w-full font-semibold rounded-b-2xl text-indigo-700 bg-white absolute shadow-lg bg-opacity-50"
+        >DFA Generated</span
       >
-        <span class="flex items-center mr-4">
+      <button
+        @click="downloadFile"
+        class="flex items-center hover:bg-gray-100 justify-start w-full px-4 py-2 bg-white text-gray-700 rounded-lg shadow-lg font-semibold cursor-pointer "
+      >
+        <span class="flex items-center mr-2">
           <svg
-            class="w-8 h-8 fill-current text-yellow-700"
+            class="w-6 h-6 fill-current text-gray-700"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -28,20 +42,14 @@
             />
           </svg>
         </span>
-        <span class="flex leading-normal">Save file</span>
-        <input
-          type="file"
-          class="hidden"
-          accept="text/plain"
-          @change="readFile"
-        />
-      </label>
+        <span class="flex leading-normal">Save</span>
+      </button>
       <label
-        class="flex items-center hover:bg-gray-100 justify-start w-full mt-4 px-6 py-2 bg-white text-gray-700 rounded-lg shadow-lg tracking-wide uppercase  cursor-pointer "
+        class="ml-4 flex items-center hover:bg-gray-100 justify-start w-full px-4 py-2 bg-white text-gray-700 rounded-lg shadow-lg font-semibold cursor-pointer "
       >
-        <span class="flex items-center mr-4">
+        <span class="flex items-center mr-2">
           <svg
-            class="w-8 h-8 fill-current text-yellow-500"
+            class="w-6 h-6 fill-current text-gray-500"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -50,7 +58,7 @@
             />
           </svg>
         </span>
-        <span class="flex leading-normal">Choose file</span>
+        <span class="flex leading-normal">Choose</span>
         <input
           type="file"
           class="hidden"
@@ -63,7 +71,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, watch } from "@vue/composition-api";
+  import { defineComponent, watch, computed } from "@vue/composition-api";
   import { withFileManager } from "@/providers/finiteautomata/withFileManager";
   import { withFiniteAutomataProvider } from "@/providers/finiteautomata/withFiniteAutomataProvider";
   import { withAutomataGraph } from "@/providers/finiteautomata/withAutomataGraph";
@@ -73,21 +81,22 @@
     components: { InstructionsSelector },
     setup() {
       const automataProvider = withFiniteAutomataProvider();
-      const instructionsLoaded = ref("");
-
       const fileManager = withFileManager();
 
       const readFile = (event: any) => {
-        console.log(event);
         fileManager
           .readFile(event.target ? event.target.files[0] : event)
           .then(res => {
-            instructionsLoaded.value = res;
+            automataProvider.changeInstructions(res);
           });
       };
 
+      const originalInstructions = computed(
+        () => automataProvider.evaluation.value.OriginalInstructions
+      );
+
       const evaluateInstructions = debounce(
-        (instructions: string, words: string) => {
+        (instructions: string, tests: string) => {
           const graphProvider = withAutomataGraph();
           graphProvider.clearGraph();
           automataProvider
@@ -95,23 +104,46 @@
             .then(() =>
               graphProvider.showGraph(automataProvider.evaluation.value.Original)
             )
-            .then(() => automataProvider.evaluateTests(words))
+            .then(() => automataProvider.evaluateTests(tests))
             .catch(err => console.log(err));
         },
         400
       );
 
-      watch(instructionsLoaded, changedInstructions => {
-        const parsed = changedInstructions.split("---");
-        const instructions = parsed[0].replaceAll("\r", "");
-        const words = parsed[1].replaceAll("\r", "");
-        evaluateInstructions(instructions, words);
+      watch(originalInstructions, changedInstructions => {
+        if (automataProvider.evaluation.value.GraphVisible !== "DFA") {
+          const parsed = changedInstructions.split("---");
+          const instructions =
+            parsed.length > 0
+              ? parsed[0].includes("\r")
+                ? parsed[0].replaceAll("\r", "")
+                : parsed[0]
+              : "";
+          const tests =
+            parsed.length > 1
+              ? parsed[1].includes("\r")
+                ? parsed[1].replaceAll("\r", "")
+                : parsed[1]
+              : "";
+          evaluateInstructions(instructions, tests);
+        }
       });
 
       return {
         automataProvider,
         readFile,
-        instructionsLoaded
+        downloadFile: () =>
+          fileManager.downloadFile(
+            automataProvider.evaluation.value.CurrentInstructions
+          ),
+        instructionsLoaded: computed(
+          () => automataProvider.evaluation.value.CurrentInstructions
+        ),
+        changeInstructions: (event: any) =>
+          automataProvider.changeInstructions(event.target.value),
+        IsDFAVisible: computed(
+          () => automataProvider.evaluation.value.GraphVisible === "DFA"
+        )
       };
     }
   });
@@ -142,5 +174,12 @@
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
     background: rgb(150, 150, 150);
+  }
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.5s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
   }
 </style>

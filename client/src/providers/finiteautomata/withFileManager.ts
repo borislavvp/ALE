@@ -1,17 +1,12 @@
-import { finiteAutomataService } from "@/api/finiteAutomataRepository";
-import { readInstructions } from "./utils/readInstructions";
-
+import { saveAs } from 'file-saver';
+import { withFiniteAutomataProvider } from './withFiniteAutomataProvider';
 export function withFileManager() {
     const readFile = (file: File) => {
         return new Promise<string>((resolve, reject) => {
                 const fileReader = new FileReader();
-            
                 fileReader.onload = function (event) {
                     if (event.target?.result) {
-                        const lines = `${event.target.result}`.split('\n');
-                        console.log(lines)
-                        // finiteAutomataService.evaluateInstructions(`${event.target.result}`);
-                        // readInstructions(lines);
+                        withFiniteAutomataProvider().setInstrucitonsName(file.name.substr(0,file.name.length-4))
                         resolve(`${event.target.result}`);
                     }
                 };
@@ -22,7 +17,13 @@ export function withFileManager() {
                 fileReader.readAsText(file);
             })
     }
+  
+    function downloadFile(text: string) {
+        const file = new File([text], "instructions.txt", {type: "text/plain;charset=utf-8"});
+        saveAs(file);
+    }
     return {
+        downloadFile,
         readFile
     }
 }

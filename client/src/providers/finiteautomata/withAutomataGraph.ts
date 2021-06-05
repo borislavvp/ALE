@@ -26,20 +26,20 @@ export const withAutomataGraph = () => {
 
     const nodes = data.States.map(s =>
       `"${s.Id}" [${s.Value === ''
-        ? 'label=""'
+        ? `label="${s.Id}"`
         : `label="${s.Value}"`} ${s.Final ? 'fontcolor=goldenrod3 shape=doublecircle color=goldenrod2'
-                                          : s.Initial ? 'color=chocolate4 fontcolor=chocolate4'
+                                          : s.Initial ? 'color=indigo fontcolor=indigo'
                                             : 'color=gray25 fontcolor=gray10'}]`)
     
     const edges = data.Transitions.map(t => 
-      `"${t.From.Id}" -> "${t.To.Id}" [label="${t.Value.Value}" ${t.From.Id === t.To.Id ? 'color=forestgreen' : 'color=gray24'}]`);
+      `"${t.From.Id}" -> "${t.To.Id}" [label="${t.Value.Value}" ${t.From.Id === t.To.Id ? 'color=dodgerblue2' : 'color=gray24'}]`);
     
     const graph = `digraph "Graph" {
           rankdir=LR;
           node [shape="circle" ];
-          "initial" [label= "", shape=point color=chocolate4]
+          "initial" [label= "", shape=point color=indigo]
           ${nodes.join('\n  ')}
-          "initial" -> "${initialNode !== undefined ? initialNode.Id : '_'}" [color=chocolate4]
+          "initial" -> "${initialNode !== undefined ? initialNode.Id : '_'}" [color=indigo]
           ${edges.join('\n  ')}
         }`;
     

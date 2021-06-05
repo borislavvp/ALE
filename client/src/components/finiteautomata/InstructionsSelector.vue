@@ -4,15 +4,16 @@
       >Select instructions</label
     >
     <select
+      :value="CurrentInstructionName"
       @change="OnInstructionChanged"
-      class="cursor-pointer shadow-md text-gray-700 px-4 py-2 rounded block w-full focus:outline-none appearance-none focus:bg-gray-200 focus:shadow-inner"
+      class="cursor-pointer shadow-md text-gray-800 font-semibold px-4 py-2 rounded block w-full hover:bg-gray-100 focus:outline-none appearance-none focus:bg-gray-200 focus:shadow-inner"
     >
       <option v-for="instruction in instructionsArray" :key="instruction.title">
         {{ instruction.title }}
       </option>
     </select>
     <svg
-      class="absolute pointer-events-none right-0 -mt-8 mr-4 h-6 w-6 fill-current text-gray-700 "
+      class="absolute pointer-events-none right-0 -mt-8 mr-4 h-6 w-6 fill-current text-gray-500 "
       viewBox="0 0 12 12"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -25,12 +26,15 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, onMounted, ref } from "@vue/composition-api";
+  import { defineComponent, onMounted, computed } from "@vue/composition-api";
   import { EsModuleComponent } from "vue/types/options";
-  import { predefinedInstructions } from "@/providers/finiteautomata/utils/predefinedInstructions";
+  import { withFiniteAutomataProvider } from "@/providers/finiteautomata/withFiniteAutomataProvider";
   export default defineComponent({
     setup(_, context) {
-      const instructionsArray = ref(predefinedInstructions);
+      const automataProvider = withFiniteAutomataProvider();
+      const instructionsArray = computed(
+        () => automataProvider.evaluation.value.PredefinedInstructions
+      );
 
       const chageInstructions = (instructionTitle: string) => {
         const getFileContent = instructionsArray.value.find(
@@ -41,7 +45,7 @@
             const blob = new Blob([content.default as string], {
               type: "text/plain"
             });
-            const file = new File([blob], "EpsilonLoop.txt", {
+            const file = new File([blob], `${instructionTitle}.txt`, {
               type: "text/plain"
             });
             context.emit("OnInstructionLoaded", file);
@@ -55,7 +59,10 @@
 
       return {
         instructionsArray,
-        OnInstructionChanged
+        OnInstructionChanged,
+        CurrentInstructionName: computed(
+          () => automataProvider.evaluation.value.CurrentInstructionName
+        )
       };
     }
   });

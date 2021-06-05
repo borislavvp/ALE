@@ -10,8 +10,12 @@ export interface GraphValues {
 export type GraphType = "DFA" | "Original";
 
 export interface FiniteAutomataEvaluation {
+  PredefinedInstructions: { title: string, src: () => Promise<any> }[],
+  CurrentInstructionName:string,
   GraphVisible: GraphType
-  DFAInstructionsID: string;
+  DFAInstructions: string;
+  CurrentInstructions: string;
+  OriginalInstructions: string;
   DFA: GraphValues;
   Original: GraphValues;
   Processing: boolean;
