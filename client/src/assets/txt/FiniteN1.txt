@@ -1,0 +1,26 @@
+alphabet: wox
+states: 1,2,3
+final: 3
+transitions:
+1,x --> 3
+1,w --> 2
+2,o --> 2
+2,w --> 3
+end.
+
+---
+
+dfa: n
+finite: n
+
+words:
+,n
+ww,y
+wow,y
+wooow,y
+x,y
+o,n
+woo,n
+xx,n
+xwow,n
+end.

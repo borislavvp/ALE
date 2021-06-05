@@ -1,0 +1,27 @@
+alphabet: ab
+states: 1,2,3,4,5
+final: 2
+transitions:
+1,a --> 3
+5,b --> 2
+3,_ --> 4
+4,_ --> 5
+4,_ --> 4
+5,_ --> 3
+
+end.
+
+---
+
+dfa: n
+finite: y
+
+words:
+,n
+a,n
+b,n
+ab,y
+ba,n
+aa,n
+bb,n
+end.

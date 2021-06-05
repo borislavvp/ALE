@@ -1,5 +1,6 @@
 regex: *(|(.(*(c),a),n))
-end.
+
+---
 
 dfa: n
 finite: n

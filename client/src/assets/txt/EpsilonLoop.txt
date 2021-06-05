@@ -25,6 +25,12 @@ C2,_ --> C2
 C1,x --> A2
 A2,y --> C1
 end.
+
+---
+
+dfa: n
+finite: n
+
 words:
 ,n
 a,y
