@@ -8,7 +8,6 @@ transitions:
 2,w --> 3
 end.
 
----
 
 dfa: n
 finite: n

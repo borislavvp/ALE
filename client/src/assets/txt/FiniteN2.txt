@@ -9,7 +9,6 @@ transitions:
 2,b --> 2
 end.
 
----
 
 dfa: n
 finite: n

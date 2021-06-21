@@ -1,18 +1,55 @@
 <template>
   <div class="mb-4 relative">
-    <label class="tex-sm text-gray-800 font-semibold"
-      >Select instructions</label
+    <div
+      class="flex items-center w-full text-center bg-gray-200 mb-4 shadow-inner rounded-3xl"
     >
+      <span
+        @click="TurnOffRegexMode"
+        :class="[
+          RegexModeOn
+            ? 'text-gray-800 bg-white shadow-lg cursor-pointer hover:bg-gray-100'
+            : 'text-indigo-600'
+        ]"
+        class="tex-sm w-1/2  font-semibold px-4  py-2 rounded-3xl"
+        >Instructions</span
+      >
+      <span
+        @click="TurnOnRegexMode"
+        :class="[
+          RegexModeOn
+            ? 'text-indigo-600'
+            : 'text-gray-800 bg-white shadow-lg cursor-pointer hover:bg-gray-100'
+        ]"
+        class="tex-sm w-1/2 text-gray-800 py-2 px-4  font-semibold rounded-3xl"
+        >Regex</span
+      >
+    </div>
+    <span v-if="RegexModeOn">
+      <input
+        id="regex"
+        class="px-4 py-2 text-gray-800 font-semibold rounded block w-full shadow-md"
+        type="text"
+        :value="regex"
+        @input="setRegex"
+        placeholder="Regex"
+      />
+    </span>
     <select
+      v-else
       :value="CurrentInstructionName"
       @change="OnInstructionChanged"
       class="cursor-pointer shadow-md text-gray-800 font-semibold px-4 py-2 rounded block w-full hover:bg-gray-100 focus:outline-none appearance-none focus:bg-gray-200 focus:shadow-inner"
     >
-      <option v-for="instruction in instructionsArray" :key="instruction.title">
+      <option
+        v-for="instruction in instructionsArray"
+        :key="instruction.title"
+        :value="instruction.title"
+      >
         {{ instruction.title }}
       </option>
     </select>
     <svg
+      v-if="!RegexModeOn"
       class="absolute pointer-events-none right-0 -mt-8 mr-4 h-6 w-6 fill-current text-gray-500 "
       viewBox="0 0 12 12"
       fill="none"
@@ -26,11 +63,20 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, onMounted, computed } from "@vue/composition-api";
+  import {
+    defineComponent,
+    onMounted,
+    computed,
+    ref
+  } from "@vue/composition-api";
   import { EsModuleComponent } from "vue/types/options";
   import { withFiniteAutomataProvider } from "@/providers/finiteautomata/withFiniteAutomataProvider";
+  import { withAutomataGraph } from "@/providers/finiteautomata/withAutomataGraph";
+  import debounce from "@/providers/finiteautomata/utils/debounce";
   export default defineComponent({
     setup(_, context) {
+      const regex = ref("");
+
       const automataProvider = withFiniteAutomataProvider();
       const instructionsArray = computed(
         () => automataProvider.evaluation.value.PredefinedInstructions
@@ -57,9 +103,29 @@
 
       onMounted(() => chageInstructions(instructionsArray.value[0].title));
 
+      const evaluateRegex = debounce((regex: string) => {
+        const graphProvider = withAutomataGraph();
+        graphProvider.clearGraph();
+        automataProvider
+          .evaluate(`regex: ${regex} \n`)
+          .then(() =>
+            graphProvider.showGraph(automataProvider.evaluation.value.Original)
+          );
+      }, 200);
+
+      const setRegex = (event: any) => {
+        regex.value = event.target.value;
+        evaluateRegex(regex.value);
+      };
+
       return {
         instructionsArray,
         OnInstructionChanged,
+        regex,
+        setRegex,
+        TurnOnRegexMode: () => automataProvider.turnOnRegexMode(),
+        TurnOffRegexMode: () => automataProvider.turnOffRegexMode(),
+        RegexModeOn: computed(() => automataProvider.evaluation.value.RegexMode),
         CurrentInstructionName: computed(
           () => automataProvider.evaluation.value.CurrentInstructionName
         )

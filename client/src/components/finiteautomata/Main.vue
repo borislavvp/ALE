@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row h-screen overflow-hidden p-8">
+  <div class="flex flex-row h-screen overflow-hidden p-10">
     <file-viewer></file-viewer>
     <automata-graph></automata-graph>
     <words-checker />

@@ -19,7 +19,7 @@
           v-if="!IsDfaAnswer || IsDfaAnswer !== IsDfaGuess"
           class="w-6 absolute -mt-3 h-6 z-10 fill-current"
           :class="{
-            'z-0 opacity-75': IsDfaAnswer !== IsDfaGuess && IsDfaAnswer
+            'z-0 opacity-50': IsDfaAnswer !== IsDfaGuess && IsDfaAnswer
           }"
         />
       </div>

@@ -9,6 +9,7 @@ const evaluation: FiniteAutomataEvaluation = reactive({
     PredefinedInstructions: predefinedInstructions,
     CurrentInstructionName:predefinedInstructions[0].title,
     GraphVisible:"Original",
+    RegexMode:false,
     Processing:false,
     Testing: false,
     DFAInstructions:"",
@@ -30,6 +31,15 @@ const evaluation: FiniteAutomataEvaluation = reactive({
     } as TestCasesEvaluation
 })
 export const withFiniteAutomataProvider = () => {
+
+    const turnOnRegexMode = () => {
+        evaluation.RegexMode = true;
+    }
+
+    const turnOffRegexMode = () => {
+        evaluation.RegexMode = false;
+    }
+
     const setInstrucitonsName = (instructionsName:string) => {
         evaluation.CurrentInstructionName = instructionsName;
     }
@@ -44,6 +54,10 @@ export const withFiniteAutomataProvider = () => {
                     evaluation.DFA.States = res.DFA?.States || [];
                     evaluation.DFA.Transitions = res.DFA?.Transitions || []
                     evaluation.DFAInstructions = res.DFAInstructions;
+                    if (evaluation.RegexMode) {
+                        evaluation.OriginalInstructions = res.OriginalInstructions;
+                        evaluation.CurrentInstructions = res.OriginalInstructions;
+                    }
                     setTimeout(() => {
                         evaluation.Processing = false;
                         resolve();
@@ -109,12 +123,15 @@ export const withFiniteAutomataProvider = () => {
    
     return {
         evaluation: computed(() => evaluation),
+        canEvaluateInstructions: computed(() => evaluation.GraphVisible !== "DFA" && !evaluation.RegexMode),
         showDFA,
         showOriginal,
         evaluate,
         evaluateTests,
         checkWord,
         changeInstructions,
-        setInstrucitonsName
+        setInstrucitonsName,
+        turnOnRegexMode,
+        turnOffRegexMode
     }
 }

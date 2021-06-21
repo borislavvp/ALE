@@ -7,7 +7,6 @@ transitions:
 3,b --> 3
 end.
 
----
 
 dfa: n
 finite: y

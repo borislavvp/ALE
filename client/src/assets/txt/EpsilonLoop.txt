@@ -26,7 +26,6 @@ C1,x --> A2
 A2,y --> C1
 end.
 
----
 
 dfa: n
 finite: n

@@ -18,6 +18,7 @@ export interface FiniteAutomataEvaluation {
   OriginalInstructions: string;
   DFA: GraphValues;
   Original: GraphValues;
+  RegexMode: boolean;
   Processing: boolean;
   Testing: boolean;
   Tests: TestCasesEvaluation;

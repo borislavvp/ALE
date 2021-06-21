@@ -1,0 +1,40 @@
+regex: .(a,b)
+
+dfa: n
+finite: y
+
+words:
+,n
+a,n
+b,n
+aa,n
+ab,y
+ba,n
+bb,n
+ 
+aaa,n
+aab,n
+aba,n
+abb,n
+baa,n
+bab,n
+bba,n
+bbb,n
+
+aaaa,n
+aaab,n
+aaba,n
+aabb,n
+abaa,n
+abab,n
+abba,n
+abbb,n
+baaa,n
+baab,n
+baba,n
+babb,n
+bbaa,n
+bbab,n
+bbba,n
+bbbb,n
+end.

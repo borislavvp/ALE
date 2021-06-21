@@ -3,7 +3,6 @@
     <instructions-selector
       @OnInstructionLoaded="readFile"
     ></instructions-selector>
-
     <textarea
       id="instructions"
       name="instructions"
@@ -12,7 +11,7 @@
       @input="changeInstructions"
       :class="{ 'text-indigo-600': IsDFAVisible }"
       class="resize-none shadow-lg p-2 flex-auto focus:outline-none text-gray-800 font-semibold focus:shadow-inner transition-default duration-500 
-      focus:bg-gray-200 max-h-64 overscroll-y-auto mt-1 block w-full sm:text-sm border-gray-200 rounded-md"
+      focus:bg-gray-200 max-h-64 overscroll-y-auto mt-1 block w-full sm:text-sm rounded-md"
       placeholder="Automata instructions"
     >
     </textarea>
@@ -22,7 +21,7 @@
     >
       <span
         v-show="IsDFAVisible"
-        class="z-10 -mt-24 text-center transition-default duration-500 text-base w-full font-semibold rounded-b-2xl text-indigo-700 bg-white absolute shadow-lg bg-opacity-50"
+        class="z-10 -mt-24 py-1 text-center transition-default duration-500 text-base w-full font-semibold rounded-b-2xl text-indigo-700 bg-white absolute shadow-lg bg-opacity-50"
         >DFA Generated</span
       >
       <button
@@ -88,7 +87,8 @@
           .readFile(event.target ? event.target.files[0] : event)
           .then(res => {
             automataProvider.changeInstructions(res);
-          });
+          })
+          .finally(() => console.log(event.target));
       };
 
       const originalInstructions = computed(
@@ -111,8 +111,15 @@
       );
 
       watch(originalInstructions, changedInstructions => {
-        if (automataProvider.evaluation.value.GraphVisible !== "DFA") {
-          const parsed = changedInstructions.split("---");
+        if (automataProvider.canEvaluateInstructions.value) {
+          const parsed = changedInstructions.includes("dfa:")
+            ? changedInstructions.split(/(?=dfa:)/g)
+            : changedInstructions.includes("finite:")
+            ? changedInstructions.split(/(?=finite:)/g)
+            : changedInstructions.includes("words:")
+            ? changedInstructions.split(/(?=words:)/g)
+            : changedInstructions;
+
           const instructions =
             parsed.length > 0
               ? parsed[0].includes("\r")

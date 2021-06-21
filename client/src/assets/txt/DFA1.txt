@@ -18,7 +18,6 @@ q3,b --> q4
 q4,c --> q5
 end.
 
----
 
 dfa: n
 finite: n

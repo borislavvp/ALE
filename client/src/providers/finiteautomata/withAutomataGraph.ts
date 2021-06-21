@@ -25,7 +25,7 @@ export const withAutomataGraph = () => {
     const initialNode = data.States.find(n => n.Initial);
 
     const nodes = data.States.map(s =>
-      `"${s.Id}" [${s.Value === ''
+      `"${s.Id}" [${s.Value.replaceAll(')',"").replaceAll('(',"") === ''
         ? `label="${s.Id}"`
         : `label="${s.Value}"`} ${s.Final ? 'fontcolor=goldenrod3 shape=doublecircle color=goldenrod2'
                                           : s.Initial ? 'color=indigo fontcolor=indigo'

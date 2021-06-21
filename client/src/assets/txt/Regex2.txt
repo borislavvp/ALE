@@ -1,6 +1,5 @@
 regex: |(*(|(*(|(a,b)),c)),|(e,f))
 
----
 
 dfa: n
 finite: n
