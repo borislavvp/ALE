@@ -7,7 +7,16 @@ namespace logic.FiniteAutomataService.Models.TompsonConstruction
 {
     public static class TompsonProcessor
     {
-
+        public static bool IsTompsonRule(this char value)
+        {
+            return value switch
+            {
+                '*' => true,
+                '.' => true,
+                '|' => true,
+                _ => false,
+            };
+        }
         public static TompsonInitialFinalStatesHelperPair ProcessRule(char rule, Stack<TompsonInitialFinalStatesHelperPair> processedValues, IFiniteAutomataStructure structure,ref int latestId)
         {
             switch (rule)
@@ -57,7 +66,7 @@ namespace logic.FiniteAutomataService.Models.TompsonConstruction
         {
             var pairToConcatFrom = processedValues.Pop();
             var pairToConcatTo = processedValues.Pop();
-
+            pairToConcatFrom.CurrentFinal.Final = false;
             pairToConcatTo.CurrentInitial.Initial = false;
 
             if (pairToConcatFrom.CurrentExtendedConnection != null && pairToConcatFrom.CurrentFinal.Directions.ContainsKey(pairToConcatFrom.CurrentExtendedConnection))

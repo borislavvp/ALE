@@ -17,6 +17,7 @@ namespace logic.FiniteAutomataService
         public FiniteAutomataEvaluationDTO EvaluateFromInstructions(IConfiguration configuration,InstructionsInput input)
         {
             this.structure = new FiniteAutomataStructure(input);
+            this.structure.GenerateOriginalInstructions(configuration);
             if (!structure.IsDFA)
             {
                 structure.BuildDFA();

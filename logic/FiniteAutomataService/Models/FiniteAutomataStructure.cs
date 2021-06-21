@@ -20,6 +20,7 @@ namespace logic.FiniteAutomataService.Models
     {
         public HashSet<IState> DFA { get; set; }
         public string DFAInstructions { get; set; }
+        public string OriginalInstructions { get; set; }
         public HashSet<IState> States { get; set; }
         public IAlphabet StructureAlphabet { get; set; }
         public bool IsDFA { get => this.CheckDFA();}
@@ -94,6 +95,14 @@ namespace logic.FiniteAutomataService.Models
 
         public void GenerateDFAInstructions(IConfiguration configuration)
         {
+            this.DFAInstructions = GenerateInstructions(configuration,this.DFA);
+        }
+        public void GenerateOriginalInstructions(IConfiguration configuration)
+        {
+            this.OriginalInstructions = GenerateInstructions(configuration,this.States);
+        }
+        public string GenerateInstructions(IConfiguration configuration, HashSet<IState> structureStates)
+        {
             try
             {
                 //string directoryPath = "./instructions/";
@@ -111,12 +120,25 @@ namespace logic.FiniteAutomataService.Models
 
                 string states = "states: ";
                 string finalStates = "final: ";
-                foreach (var state in this.DFA)
+                foreach (var state in structureStates)
                 {
-                    states += state.Value + ',';
+                    if (String.IsNullOrWhiteSpace(state.Value.Trim(')').Trim('('))) {
+                        states+= $@"{state.Id}" + ',';
+                    }
+                    else
+                    {
+                        states += state.Value + ',';
+                    }
                     if (state.Final)
                     {
-                        finalStates += state.Value + ',';
+                        if (String.IsNullOrWhiteSpace(state.Value.Trim(')').Trim('(')))
+                        {
+                            finalStates += $@"{state.Id}" + ',';
+                        }
+                        else
+                        {
+                            finalStates += state.Value + ',';
+                        }
                     }
                 }
                 states = states.Trim(',');
@@ -124,13 +146,15 @@ namespace logic.FiniteAutomataService.Models
 
                 string transitions = "transitions: ";
                 transitions += Environment.NewLine;
-                foreach (var state in this.DFA)
+                foreach (var state in structureStates)
                 {
                     foreach (var direction in state.Directions)
                     {
                         foreach (var letter in direction.Value)
                         {
-                            transitions += @$"{state.Value},{letter.Value} --> {direction.Key.Value} ";
+                            string stateValue = String.IsNullOrWhiteSpace(state.Value.Trim(')').Trim('(')) ? $@"{state.Id}" : state.Value;
+                            string directionValue = String.IsNullOrWhiteSpace(direction.Key.Value.Trim(')').Trim('(')) ? $@"{direction.Key.Id}" : state.Value;
+                            transitions += @$"{stateValue},{letter.Value} --> {directionValue} ";
                             transitions += Environment.NewLine;
                         }
                     }
@@ -146,7 +170,6 @@ namespace logic.FiniteAutomataService.Models
                     + transitions
                     + Environment.NewLine;
 
-                instructions += "---";
                 instructions += Environment.NewLine;
                 instructions += "dfa:y";
                 instructions += Environment.NewLine;
@@ -156,12 +179,13 @@ namespace logic.FiniteAutomataService.Models
                 //await BlobHelper.PublishFile(configuration, instructionsID, localFilePath);
 
                 //FileHelper.DeleteFiles(directoryPath);
-                this.DFAInstructions = instructions;
+                return instructions;
             }
 
             catch (Exception Ex)
             {
                 Console.WriteLine(Ex.ToString());
+                return "";
             }
         }
 
@@ -205,7 +229,7 @@ namespace logic.FiniteAutomataService.Models
             int statesIdCounter = 0;
             for (int i = preparedRegex.Length - 1; i >= 0; i--)
             {
-                if (preparedRegex[i].IsTompsonRule())
+                if (TompsonProcessor.IsTompsonRule(preparedRegex[i]))
                 {
                     processedValues.Push(TompsonProcessor.ProcessRule(preparedRegex[i], processedValues, this, ref statesIdCounter));
                 }

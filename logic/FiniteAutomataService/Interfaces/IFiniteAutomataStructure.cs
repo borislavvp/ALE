@@ -12,6 +12,7 @@ namespace logic.FiniteAutomataService.Interfaces
     {
         HashSet<IState> DFA { get; set; }
         string DFAInstructions { get; set; }
+        string OriginalInstructions { get; set; }
         bool IsDFA { get; }
         bool IsFinite { get; }
         IAlphabet StructureAlphabet { get; set; }
@@ -22,5 +23,6 @@ namespace logic.FiniteAutomataService.Interfaces
         void BuildStructureFromRegex(string regex);
         void BuildDFA();
         void GenerateDFAInstructions(IConfiguration configuration);
+        void GenerateOriginalInstructions(IConfiguration configuration);
     }
 }
