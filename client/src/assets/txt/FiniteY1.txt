@@ -1,0 +1,12 @@
+alphabet: ab
+states: 1,2,3
+final: 2
+transitions:
+1,a --> 2
+1,b --> 3
+3,b --> 3
+end.
+
+
+dfa: n
+finite: y

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace server.Controllers
 {
     [ApiController]
-    [Route("api")]
+    [Route("api/expression")]
     public class ExpressionController : Controller
     {
         [HttpPost]

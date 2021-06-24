@@ -1,0 +1,14 @@
+regex: *(|(.(*(c),a),n))
+
+
+dfa: n
+finite: n
+
+words:
+,n
+ww,y
+wow,y
+wooow,y
+o,n
+woo,n
+end.
