@@ -65,7 +65,7 @@ namespace logic.FiniteAutomataService.Models
             
             foreach (var item in this.Directions.Values)
             {
-                if (item.Contains(Alphabet.EPSILON_LETTER))
+                if (item.Contains(new DirectionValue { Letter = Alphabet.EPSILON_LETTER }))
                 {
                     currentContainsEpsilon = true;
                 }
@@ -73,7 +73,7 @@ namespace logic.FiniteAutomataService.Models
             
             foreach (var otherItem in other.Directions.Values)
             {
-                if (otherItem.Contains(Alphabet.EPSILON_LETTER))
+                if (otherItem.Contains(new DirectionValue { Letter = Alphabet.EPSILON_LETTER }))
                 {
                     return currentContainsEpsilon 
                         ? this.Id.CompareTo(other.Id)
@@ -117,7 +117,8 @@ namespace logic.FiniteAutomataService.Models
             {
                 foreach (var direction in queue.Dequeue().Directions)
                 {
-                    if (direction.Value.Contains(Alphabet.EPSILON_LETTER) && !closures.Contains(direction.Key))
+                    if (direction.Value.Contains(new DirectionValue { Letter = Alphabet.EPSILON_LETTER }) 
+                        && !closures.Contains(direction.Key))
                     {
                         queue.Enqueue(direction.Key);
                         closures.Add(direction.Key);
@@ -144,9 +145,9 @@ namespace logic.FiniteAutomataService.Models
                     if (!traversed.Contains(direction.Key))
                     {
                         if (direction.Key.Equals(queue.Peek())){ 
-                            foreach (var letter in direction.Value)
+                            foreach (var value in direction.Value)
                             {
-                                if (!letter.IsEpsilon)
+                                if (!value.Letter.IsEpsilon)
                                 {
                                     selfReferenced.Add(queue.Peek());
                                     break;
@@ -163,54 +164,78 @@ namespace logic.FiniteAutomataService.Models
        }
         public bool CheckWord(string word)
         {
-            return this.CheckWordWithDirections(new Dictionary<WordCheckerTransitionKey, HashSet<IState>>(), this, word, 0);
+            return this.CheckWordWithDirections(
+                new Dictionary<WordCheckerTransitionKey, HashSet<IState>>(),new Stack<ILetter>(), this, word, 0);
         }
 
         private bool CheckWordWithDirections(Dictionary<WordCheckerTransitionKey, HashSet<IState>> tracker,
-            IState state, string word, int fromLetter)
+           Stack<ILetter> stack, IState state, string word, int fromLetter)
         {
             foreach (var direction in state.Directions)
             {
                 var currentTransition = new WordCheckerTransitionKey(state, fromLetter);
-                if (fromLetter < word.Length &&
+                if( 
                     (!tracker.ContainsKey(currentTransition) ||
-                    !tracker[currentTransition].Contains(direction.Key)) &&
-                     direction.Value.Contains(new Letter(word[fromLetter])))
+                    !tracker[currentTransition].Contains(direction.Key))
+                  )
                 {
-                    if (tracker.ContainsKey(currentTransition))
+                    var directionValue = fromLetter < word.Length 
+                        ? direction.Value.GetDirectionValueByLetter(new Letter(word[fromLetter]))
+                        : null;
+
+                    bool hasMatch = false;
+                    int nextIndex = fromLetter;
+
+                    if (directionValue != null)
                     {
-                        tracker[currentTransition].Add(direction.Key);
+                        hasMatch = true;
+                        nextIndex++;
                     }
-                    else
+                    else if (
+                        direction.Value.Contains(new DirectionValue { Letter = Alphabet.EPSILON_LETTER }) )
                     {
-                        tracker.Add(currentTransition, new HashSet<IState>() { direction.Key });
+                        hasMatch = true;
+                        directionValue = direction.Value.GetDirectionValueByLetter(Alphabet.EPSILON_LETTER);
                     }
-                    if (CheckWordWithDirections(tracker, direction.Key, word, fromLetter + 1))
+
+                    if (hasMatch && 
+                        ( !directionValue.PushDown ||
+                          !directionValue.ShouldPopFromStack ||
+                          (stack.Count > 0 && stack.Peek().Equals(directionValue.LetterToPop))
+                        )
+                       )
                     {
-                        return true;
-                    }
-                }
-                else if (
-                    direction.Value.Contains(Alphabet.EPSILON_LETTER) &&
-                    (!tracker.ContainsKey(currentTransition) ||
-                    !tracker[currentTransition].Contains(direction.Key)))
-                {
-                    if (tracker.ContainsKey(currentTransition))
-                    {
-                        tracker[currentTransition].Add(direction.Key);
-                    }
-                    else
-                    {
-                        tracker.Add(currentTransition, new HashSet<IState>() { direction.Key });
-                    }
-                    if (CheckWordWithDirections(tracker, direction.Key, word, fromLetter))
-                    {
-                        return true;
+                        bool actionSucceeded = directionValue.PerformStackAction(ref stack);
+                        if (!actionSucceeded)
+                        {
+                            return false;
+                        }
+
+                        if (tracker.ContainsKey(currentTransition))
+                        {
+                            tracker[currentTransition].Add(direction.Key);
+                        }
+                        else
+                        {
+                            tracker.Add(currentTransition, new HashSet<IState>() { direction.Key });
+                        }
+                        if (CheckWordWithDirections(tracker, stack, direction.Key, word, nextIndex))
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            bool undoSucceeded = directionValue.UndoStackAction(ref stack);
+                            if (!undoSucceeded)
+                            {
+                                return false;
+                            }
+                        }
                     }
                 }
             }
 
-            return state.Final && fromLetter >= word.Length;
+            return state.Final && fromLetter >= word.Length && stack.Count == 0;
         }
 
     }

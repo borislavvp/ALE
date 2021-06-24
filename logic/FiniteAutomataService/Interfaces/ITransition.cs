@@ -1,4 +1,5 @@
-﻿using System;
+﻿using logic.FiniteAutomataService.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,6 +10,6 @@ namespace logic.FiniteAutomataService.Interfaces
         int Id { get; set; }
         IState From { get; set; }
         IState To { get; set; }
-        ILetter Value { get; set; }
+        DirectionValue Value { get; set; }
     }
 }

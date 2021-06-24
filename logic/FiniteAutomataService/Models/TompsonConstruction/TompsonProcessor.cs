@@ -17,7 +17,11 @@ namespace logic.FiniteAutomataService.Models.TompsonConstruction
                 _ => false,
             };
         }
-        public static TompsonInitialFinalStatesHelperPair ProcessRule(char rule, Stack<TompsonInitialFinalStatesHelperPair> processedValues, IFiniteAutomataStructure structure,ref int latestId)
+        public static TompsonInitialFinalStatesHelperPair ProcessRule(
+            char rule, 
+            Stack<TompsonInitialFinalStatesHelperPair> processedValues,
+            IFiniteAutomataStructure structure,
+            ref int latestId)
         {
             switch (rule)
             {
@@ -39,15 +43,23 @@ namespace logic.FiniteAutomataService.Models.TompsonConstruction
         {
             var pairToProcess = processedValues.Pop();
             pairToProcess.CurrentFinal.Final = false;
-
+            if (pairToProcess.CurrentExtendedConnection != null && pairToProcess.CurrentFinal.Directions.ContainsKey(pairToProcess.CurrentExtendedConnection))
+            {
+                structure.States.Remove(pairToProcess.CurrentExtendedConnection);
+                pairToProcess.CurrentFinal.Directions.Remove(pairToProcess.CurrentExtendedConnection);
+            }
             var newFinalState = new State(++latestId, "", false);
 
-            newFinalState.Directions.Add(pairToProcess.CurrentInitial, new HashSet<ILetter>() { Alphabet.EPSILON_LETTER });
-            pairToProcess.CurrentFinal.Directions.Add(newFinalState, new HashSet<ILetter>() { Alphabet.EPSILON_LETTER });
-            pairToProcess.CurrentInitial.Directions.Add(newFinalState, new HashSet<ILetter>() { Alphabet.EPSILON_LETTER });
+            newFinalState.Directions.Add(pairToProcess.CurrentInitial,
+                new HashSet<DirectionValue>() { new DirectionValue { Letter = Alphabet.EPSILON_LETTER } });
+            pairToProcess.CurrentFinal.Directions.Add(newFinalState,
+                new HashSet<DirectionValue>() { new DirectionValue { Letter = Alphabet.EPSILON_LETTER } });
+            pairToProcess.CurrentInitial.Directions.Add(newFinalState,
+                new HashSet<DirectionValue>() { new DirectionValue { Letter = Alphabet.EPSILON_LETTER } });
 
             var newExtendedConnection = new State(++latestId, "", false, true);
-            newFinalState.Directions.Add(newExtendedConnection, new HashSet<ILetter>() { Alphabet.EPSILON_LETTER });
+            newFinalState.Directions.Add(newExtendedConnection,
+                new HashSet<DirectionValue>() { new DirectionValue { Letter = Alphabet.EPSILON_LETTER } });
 
             structure.States.Add(newExtendedConnection);
             structure.States.Add(newFinalState);
@@ -75,14 +87,16 @@ namespace logic.FiniteAutomataService.Models.TompsonConstruction
                 pairToConcatFrom.CurrentFinal.Directions.Remove(pairToConcatFrom.CurrentExtendedConnection);
             }
 
-            pairToConcatFrom.CurrentFinal.Directions.Add(pairToConcatTo.CurrentInitial, new HashSet<ILetter>() { Alphabet.EPSILON_LETTER });
+            pairToConcatFrom.CurrentFinal.Directions.Add(pairToConcatTo.CurrentInitial,
+               new HashSet<DirectionValue>() { new DirectionValue { Letter = Alphabet.EPSILON_LETTER } });
 
             if (pairToConcatTo.CurrentExtendedConnection == null || !pairToConcatTo.CurrentFinal.Directions.ContainsKey(pairToConcatTo.CurrentExtendedConnection))
             {
                 var newExtendedConnection = new State(++latestId, "", false, true);
                 structure.States.Add(newExtendedConnection);
                 pairToConcatTo.CurrentFinal.Final = false;
-                pairToConcatTo.CurrentFinal.Directions.Add(newExtendedConnection, new HashSet<ILetter>() { Alphabet.EPSILON_LETTER });
+                pairToConcatTo.CurrentFinal.Directions.Add(newExtendedConnection,
+                   new HashSet<DirectionValue>() { new DirectionValue { Letter = Alphabet.EPSILON_LETTER } });
                 pairToConcatTo.CurrentExtendedConnection = newExtendedConnection;
             }
 
@@ -116,17 +130,21 @@ namespace logic.FiniteAutomataService.Models.TompsonConstruction
                 structure.States.Remove(pair1.CurrentExtendedConnection);
                 pair1.CurrentFinal.Directions.Remove(pair1.CurrentExtendedConnection);
             }
-            pair1.CurrentFinal.Directions.Add(newExtendedConnection, new HashSet<ILetter>() { Alphabet.EPSILON_LETTER });
+            pair1.CurrentFinal.Directions.Add(newExtendedConnection,
+                new HashSet<DirectionValue>() { new DirectionValue { Letter = Alphabet.EPSILON_LETTER } });
 
             if (pair2.CurrentExtendedConnection != null && pair2.CurrentFinal.Directions.ContainsKey(pair2.CurrentExtendedConnection))
             {
                 structure.States.Remove(pair2.CurrentExtendedConnection);
                 pair2.CurrentFinal.Directions.Remove(pair2.CurrentExtendedConnection);
             }
-            pair2.CurrentFinal.Directions.Add(newExtendedConnection, new HashSet<ILetter>() { Alphabet.EPSILON_LETTER });
+            pair2.CurrentFinal.Directions.Add(newExtendedConnection,
+                new HashSet<DirectionValue>() { new DirectionValue { Letter = Alphabet.EPSILON_LETTER } });
 
-            newInitialState.Directions.Add(pair1.CurrentInitial, new HashSet<ILetter>() { Alphabet.EPSILON_LETTER });
-            newInitialState.Directions.Add(pair2.CurrentInitial, new HashSet<ILetter>() { Alphabet.EPSILON_LETTER });
+            newInitialState.Directions.Add(pair1.CurrentInitial,
+                new HashSet<DirectionValue>() { new DirectionValue { Letter = Alphabet.EPSILON_LETTER } });
+            newInitialState.Directions.Add(pair2.CurrentInitial,
+                new HashSet<DirectionValue>() { new DirectionValue { Letter = Alphabet.EPSILON_LETTER } });
 
             structure.States.Add(newExtendedConnection);
             structure.States.Add(newInitialState);

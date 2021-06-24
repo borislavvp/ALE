@@ -28,6 +28,19 @@ namespace logic.FiniteAutomataService.DTO
         {
             return RegexHelper.Match(this.instructions, Instruction.REGEX);
         }
+        public HashSet<ILetter> PopulateStack()
+        {
+            var result = RegexHelper.Match(this.instructions, Instruction.STACK);
+
+            var stackValues = result.Trim().ToCharArray();
+            HashSet<ILetter> stack = new HashSet<ILetter>();
+
+            for (int i = 0; i < stackValues.Length; i++)
+            {
+                stack.Add(new Letter(stackValues[i]));
+            }
+            return stack;
+        }
         public HashSet<IState> PopulateStates()
         {
             var result = RegexHelper.Match(this.instructions, Instruction.STATES);

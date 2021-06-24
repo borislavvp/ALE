@@ -9,10 +9,10 @@ namespace logic.FiniteAutomataService.Models
     {
         public IState From { get; set; }
         public IState To { get; set; }
-        public ILetter Value { get; set; }
+        public DirectionValue Value { get; set; }
         public int Id { get; set; }
 
-        public Transition(int Id, IState From, IState To, ILetter Value)
+        public Transition(int Id, IState From, IState To, DirectionValue Value)
         {
             this.Id = Id;
             this.From = From;

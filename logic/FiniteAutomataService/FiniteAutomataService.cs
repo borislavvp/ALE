@@ -33,7 +33,7 @@ namespace logic.FiniteAutomataService
 
         public bool CheckWord(string word)
         {
-            return this.structure.WordExists(word);
+            return this.structure.WordExists(String.IsNullOrWhiteSpace(word) ? "" : word);
         }
     }
 }

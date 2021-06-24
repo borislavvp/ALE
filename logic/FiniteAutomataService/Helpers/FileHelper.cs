@@ -18,12 +18,9 @@ namespace logic.FiniteAutomataService.Helpers
                 Directory.CreateDirectory(directoryName);
             }
 
-            //await File.WriteAllTextAsync(localFilePath, "Hello, World!");
-            using (StreamWriter sw = File.CreateText(filePath))
-            {
-                sw.Write(content);
-                sw.Close();
-            }
+            using StreamWriter sw = File.CreateText(filePath);
+            sw.Write(content);
+            sw.Close();
         }
         public static void DeleteFiles(string directoryName)
         {

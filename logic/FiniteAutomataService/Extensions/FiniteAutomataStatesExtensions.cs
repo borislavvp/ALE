@@ -29,7 +29,11 @@ namespace logic.FiniteAutomataService.Extensions
             }
             return states;
         }
-        public static HashSet<IState> PopulateTransitions(this HashSet<IState> states,IAlphabet alphabet, InstructionsInput input)
+        public static HashSet<IState> PopulateTransitions(
+            this HashSet<IState> states,
+            IAlphabet alphabet, 
+            HashSet<ILetter> stack,
+            InstructionsInput input)
         {
             var transitions = RegexHelper.Match(input.instructions, Instruction.TRANSITIONS).Split("\n");
             foreach (var transition in transitions)
@@ -37,14 +41,39 @@ namespace logic.FiniteAutomataService.Extensions
                 if (String.IsNullOrWhiteSpace(transition)) continue;
 
                 var transitionGroup = transition.Trim().Split(InstructionDelimeter.TRANSITION_FROM_TO);
-                var transitionFromValues = transitionGroup[0].Trim().Split(InstructionDelimeter.TRANSITION_FROM_VALUES);
+                var transitionFromValues = transitionGroup[0].Trim().Split(InstructionDelimeter.TRANSITION_FROM_VALUES,2);
                 var toStateValue = transitionGroup[1].Trim();
 
                 var fromStateValue = transitionFromValues[0].Trim();
                 var transitionLetter = new Letter(transitionFromValues[1].Trim().ToCharArray()[0]);
 
+                var transitionValue = new DirectionValue
+                { 
+                     Letter = transitionLetter
+                };
+
+
+                var pushDownGroup = RegexHelper.Match(transitionFromValues[1], "(?<=\\[)([\\S\\s].*?)*(?=])").Trim();
+                if (!String.IsNullOrWhiteSpace(pushDownGroup))
+                {
+                    var pushDownValues = pushDownGroup.Split(",");
+
+                    var letterToPop = new Letter(pushDownValues[0].Trim().ToCharArray()[0]);
+                    var letterToPush = new Letter(pushDownValues[1].Trim().ToCharArray()[0]);
+                    if( (!letterToPop.IsEpsilon  && !stack.Contains(letterToPop)) ||
+                        (!letterToPush.IsEpsilon && !stack.Contains(letterToPush))
+                       )
+                    {
+                        throw new Exception("Invalid push down values!");
+                    }
+                    transitionValue.LetterToPop = letterToPop;
+                    transitionValue.LetterToPush = letterToPush;
+                }
+
                 if (transitionLetter.IsEpsilon && !alphabet.Letters.Contains(transitionLetter))
+                {
                     alphabet.Letters.Add(transitionLetter);
+                }
 
                 if (alphabet.Letters.Contains(transitionLetter))
                 {
@@ -58,11 +87,11 @@ namespace logic.FiniteAutomataService.Extensions
                                 {
                                     if (fromState.Directions.ContainsKey(toState))
                                     {
-                                        fromState.Directions[toState].Add(transitionLetter);
+                                        fromState.Directions[toState].Add(transitionValue);
                                     }
                                     else
                                     {
-                                        fromState.Directions.Add(toState, new HashSet<ILetter>() { transitionLetter });
+                                        fromState.Directions.Add(toState, new HashSet<DirectionValue>() { transitionValue });
                                     }
                                 }
                             }
@@ -86,7 +115,7 @@ namespace logic.FiniteAutomataService.Extensions
                 }
                 if (statesTracker.Contains(direction.Key))
                 {
-                    if (!direction.Value.Contains(Alphabet.EPSILON_LETTER))
+                    if (!direction.Value.Contains(new DirectionValue { Letter = Alphabet.EPSILON_LETTER }))
                     {
                         statesInALoop.Add(direction.Key);
                         break;
@@ -96,13 +125,17 @@ namespace logic.FiniteAutomataService.Extensions
                     {
                         if (transition.From.Equals(direction.Key))
                         {
+                            if (!transition.Value.Letter.IsEpsilon &&
+                                transition.To.CanReachStates(new HashSet<IState>() { currentState }))
+                            {
+                                statesInALoop.Add(direction.Key);
+                            }
                             break;
                         }
-                        if (!transition.Value.Equals(Alphabet.EPSILON_LETTER) &&
-                            !transition.From.Equals(currentState) &&
-                            transition.From.CanReachStates(new HashSet<IState>() { direction.Key }))
+                        if (!transition.Value.Letter.IsEpsilon &&
+                                 !transition.From.Equals(currentState) &&
+                                 transition.From.CanReachStates(new HashSet<IState>() { direction.Key }))
                         {
-
                             statesInALoop.Add(direction.Key);
                             break;
                         }
@@ -110,31 +143,36 @@ namespace logic.FiniteAutomataService.Extensions
                 }
                 else
                 {
-                    foreach (var letter in direction.Value)
+                    foreach (var value in direction.Value)
                     {
-                        transitionsTracker.Add(new Transition(1, currentState, direction.Key, letter));
+                        transitionsTracker.Add(new Transition(1, currentState, direction.Key, value));
                     }
                     PopulateStatesPartOfALoop(statesTracker, direction.Key, transitionsTracker, statesInALoop);
                 }
             }
+            statesTracker.Remove(currentState);
             return statesInALoop;
         }
         
-        public static HashSet<string> GatherAllPossibleWords(this HashSet<IState> traversed,
-            HashSet<string> words, string currentWord, IState state)
+        public static HashSet<string> GatherAllPossibleWords(
+            this HashSet<IState> traversed,
+            HashSet<string> words,
+            string currentWord,
+            IState state)
         {
             foreach (var direction in state.Directions)
             {
                 if (!traversed.Contains(direction.Key))
                 {
                     traversed.Add(direction.Key);
-                    foreach (var letter in direction.Value)
+                    foreach (var value in direction.Value)
                     {
-                        if (!letter.IsEpsilon)
+                        if (!value.Letter.IsEpsilon)
                         {
-                            currentWord += letter.Value;
+                            currentWord += value.Letter.Value;
                         }
                         GatherAllPossibleWords(traversed, words, currentWord, direction.Key);
+                        currentWord = currentWord.Length > 0 ? currentWord[0..^1] : currentWord;
                     }
                 }
             }

@@ -12,14 +12,27 @@ namespace logic.FiniteAutomataService.DTO
         public int Id { get; set; }
         public StateDTO From { get; set; }
         public StateDTO To { get; set; }
-        public ILetter Value { get; set; }
+        public TransitionValue Value { get; set; }
 
-        public TransitionDTO(int Id,StateDTO From, StateDTO To, ILetter Value)
+        public TransitionDTO(int Id,StateDTO From, StateDTO To, DirectionValue Value)
         {
             this.Id = Id;
             this.From = From;
             this.To = To;
-            this.Value = Value.IsEpsilon ? new Letter('ε'): Value;
+            this.Value = new TransitionValue
+            {
+                Letter = Value.Letter.IsEpsilon ? new Letter('ε') : Value.Letter,
+                LetterToPush = Value.LetterToPush != null 
+                                ? Value.LetterToPush.IsEpsilon 
+                                    ? new Letter('ε') 
+                                    : Value.LetterToPush
+                                : null,
+                LetterToPop = Value.LetterToPop != null 
+                                ? Value.LetterToPop.IsEpsilon 
+                                    ? new Letter('ε') 
+                                    : Value.LetterToPop
+                                : null,
+            };
         }
         public override bool Equals(object obj)
         {

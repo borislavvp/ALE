@@ -17,10 +17,12 @@ namespace logic.FiniteAutomataService.Interfaces
         bool IsFinite { get; }
         IAlphabet StructureAlphabet { get; set; }
         HashSet<IState> States { get; set; }
+        HashSet<ILetter> Stack { get; set; }
         IState GetInitialState();
+        HashSet<IState> GetFinalStates();
         TestsEvaluationResult EvaluateTests(TestsInput input);
+        bool CheckDFA(HashSet<IState> states);
         bool WordExists(string word);
-        void BuildStructureFromRegex(string regex);
         void BuildDFA();
         void GenerateDFAInstructions(IConfiguration configuration);
         void GenerateOriginalInstructions(IConfiguration configuration);

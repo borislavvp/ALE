@@ -18,6 +18,6 @@ namespace logic.FiniteAutomataService.Helpers
             {
                 return rg.Captures[0].Value.Trim();
             }
-        }
+        } 
     }
 }

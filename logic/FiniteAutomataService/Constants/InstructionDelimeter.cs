@@ -10,6 +10,7 @@ namespace logic.FiniteAutomataService.Constants
         public const string TRANSITION_FROM_TO = "-->";
         public const string TRANSITION_FROM_VALUES = ",";
         public const string STATES_VALUES = ",";
+        public const string STACK_VALUES = "";
         public const string FINAL_STATES_VALUES = ",";
         public const string ALPHABET_VALUES = "";
     }

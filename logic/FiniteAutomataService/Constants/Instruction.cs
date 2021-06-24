@@ -8,6 +8,7 @@ namespace logic.FiniteAutomataService.Constants
     {
         public const string STATES = "(?<=states:)(.*?)\n|\r|\r\n";
         public const string ALPHABET = "(?<=alphabet:)(.*?)\n|\r|\r\n";
+        public const string STACK = "(?<=stack:)(.*?)\n|\r|\r\n";
         public const string REGEX = "(?<=regex:)(.*?)\n|\r|\r\n";
         public const string FINAL_STATES = "(?<=final:)(.*?)\n|\r|\r\n";
         public const string TRANSITIONS = "(?<=transitions:)([\\S\\s].*?)*(?=end.)";

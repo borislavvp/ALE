@@ -25,9 +25,10 @@ namespace logic.FiniteAutomataService.DTO
             {
                 foreach (var direciton in state.Directions)
                 {
-                    foreach (var letter in direciton.Value)
+                    foreach (var value in direciton.Value)
                     {
-                        this.Transitions.Add(new TransitionDTO(++counter,StateDTO.FromModel(state), StateDTO.FromModel(direciton.Key), letter));
+                        this.Transitions.Add(new TransitionDTO(++counter,StateDTO.FromModel(state),
+                            StateDTO.FromModel(direciton.Key),value));
                     }
                 }
             }

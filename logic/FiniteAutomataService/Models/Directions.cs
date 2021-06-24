@@ -6,7 +6,7 @@ using System.Text;
 
 namespace logic.FiniteAutomataService.Models
 {
-    public class Directions : SortedDictionary<IState, HashSet<ILetter>>
+    public class Directions : SortedDictionary<IState, HashSet<DirectionValue>>
     {
         public Directions() : base() { }
     }

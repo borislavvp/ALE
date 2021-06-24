@@ -23,8 +23,16 @@ namespace logic.FiniteAutomataService.Models
         public string OriginalInstructions { get; set; }
         public HashSet<IState> States { get; set; }
         public IAlphabet StructureAlphabet { get; set; }
-        public bool IsDFA { get => this.CheckDFA();}
+        public bool IsDFA { get => this.CheckDFA(this.States);}
         public bool IsFinite { get => this.CheckFinite(); }
+        public HashSet<ILetter> Stack { get; set; }
+
+        public FiniteAutomataStructure()
+        {
+            this.StructureAlphabet = new Alphabet();
+            this.States = new HashSet<IState>();
+            this.Stack = new HashSet<ILetter>();
+        }
         public FiniteAutomataStructure(InstructionsInput input)
         {
             if (input.instructions.Contains("regex")) {
@@ -35,9 +43,10 @@ namespace logic.FiniteAutomataService.Models
             else
             {
                 this.StructureAlphabet = input.PopulateAlphabet();
+                this.Stack = input.PopulateStack();
                 this.States = input.PopulateStates()
                                    .MarkFinalStates(input)
-                                   .PopulateTransitions(this.StructureAlphabet,input);
+                                   .PopulateTransitions(this.StructureAlphabet,this.Stack,input);
             }
         }
 
@@ -48,22 +57,22 @@ namespace logic.FiniteAutomataService.Models
         public HashSet<IState> GetFinalStates()
         {
             return this.States.Where(s => s.Final).ToHashSet();
-        } 
+        }
 
-        private bool CheckDFA()
+        public bool CheckDFA(HashSet<IState> states)
         {
             if (this.StructureAlphabet.Letters.Contains(Alphabet.EPSILON_LETTER))
             {
                 return false;
             }
-            foreach (var state in this.States)
+            foreach (var state in states)
             {
                 var temp = new HashSet<ILetter>();
                 foreach (var values in state.Directions.Values)
                 {
-                    foreach (var letter in values)
+                    foreach (var value in values)
                     {
-                        temp.Add(letter);
+                        temp.Add(value.Letter);
                     }
                 }
                 if (!temp.SetEquals(this.StructureAlphabet.Letters)){
@@ -95,13 +104,13 @@ namespace logic.FiniteAutomataService.Models
 
         public void GenerateDFAInstructions(IConfiguration configuration)
         {
-            this.DFAInstructions = GenerateInstructions(configuration,this.DFA);
+            this.DFAInstructions = GenerateInstructions(configuration,this.DFA,true);
         }
         public void GenerateOriginalInstructions(IConfiguration configuration)
         {
-            this.OriginalInstructions = GenerateInstructions(configuration,this.States);
+            this.OriginalInstructions = GenerateInstructions(configuration,this.States, this.IsDFA);
         }
-        public string GenerateInstructions(IConfiguration configuration, HashSet<IState> structureStates)
+        private string GenerateInstructions(IConfiguration configuration, HashSet<IState> structureStates,bool dfa)
         {
             try
             {
@@ -118,16 +127,30 @@ namespace logic.FiniteAutomataService.Models
                     }
                 }
 
-                string states = "states: ";
+                string states = "";
                 string finalStates = "final: ";
                 foreach (var state in structureStates)
                 {
                     if (String.IsNullOrWhiteSpace(state.Value.Trim(')').Trim('('))) {
-                        states+= $@"{state.Id}" + ',';
+                        if (state.Initial)
+                        {
+                            states = $@"{state.Id}" + ',' + states;
+                        }
+                        else
+                        {
+                            states += $@"{state.Id}" + ',';
+                        }
                     }
                     else
                     {
-                        states += state.Value + ',';
+                        if (state.Initial)
+                        {
+                            states = state.Value + ',' + states;
+                        }
+                        else
+                        {
+                            states += state.Value + ',';
+                        }
                     }
                     if (state.Final)
                     {
@@ -141,7 +164,7 @@ namespace logic.FiniteAutomataService.Models
                         }
                     }
                 }
-                states = states.Trim(',');
+                states = "states:" + states.Trim(',');
                 finalStates = finalStates.Trim(',');
 
                 string transitions = "transitions: ";
@@ -150,11 +173,16 @@ namespace logic.FiniteAutomataService.Models
                 {
                     foreach (var direction in state.Directions)
                     {
-                        foreach (var letter in direction.Value)
+                        foreach (var value in direction.Value)
                         {
                             string stateValue = String.IsNullOrWhiteSpace(state.Value.Trim(')').Trim('(')) ? $@"{state.Id}" : state.Value;
-                            string directionValue = String.IsNullOrWhiteSpace(direction.Key.Value.Trim(')').Trim('(')) ? $@"{direction.Key.Id}" : state.Value;
-                            transitions += @$"{stateValue},{letter.Value} --> {directionValue} ";
+                            string directionValue = String.IsNullOrWhiteSpace(direction.Key.Value.Trim(')').Trim('(')) ? $@"{direction.Key.Id}" : direction.Key.Value;
+                            string pushDownValue = "";
+                            if(value.PushDown)
+                            {
+                                pushDownValue = $@"[{value.LetterToPop.Value},{value.LetterToPush.Value}] ";
+                            }
+                            transitions += @$"{stateValue},{value.Letter.Value} {pushDownValue}--> {directionValue} ";
                             transitions += Environment.NewLine;
                         }
                     }
@@ -171,7 +199,7 @@ namespace logic.FiniteAutomataService.Models
                     + Environment.NewLine;
 
                 instructions += Environment.NewLine;
-                instructions += "dfa:y";
+                instructions += "dfa:" + (dfa ? 'y' : 'n');
                 instructions += Environment.NewLine;
                 instructions += "finite:" + (this.IsFinite ? 'y' : 'n');
 
@@ -191,9 +219,11 @@ namespace logic.FiniteAutomataService.Models
 
         public TestsEvaluationResult EvaluateTests(TestsInput input)
         {
-            TestsEvaluationResult result = new TestsEvaluationResult();
-            result.IsDFA = new TestInputAnswer(input.GetDFATestCase(), this.IsDFA);
-            result.IsFinite = new TestInputAnswer(input.GetFiniteTestCase(), this.IsFinite);
+            TestsEvaluationResult result = new TestsEvaluationResult
+            {
+                IsDFA = new TestInputAnswer(input.GetDFATestCase(), this.IsDFA),
+                IsFinite = new TestInputAnswer(input.GetFiniteTestCase(), this.IsFinite)
+            };
             if (result.IsFinite.Answer)
             {
                 result.AllPossibleWords = this.GetInitialState().GetAllPossibleWords();
@@ -220,7 +250,7 @@ namespace logic.FiniteAutomataService.Models
             return this.GetInitialState().CheckWord(word);
         }
 
-        public void BuildStructureFromRegex(string regex)
+        private void BuildStructureFromRegex(string regex)
         {
             Stack<TompsonInitialFinalStatesHelperPair> processedValues = new Stack<TompsonInitialFinalStatesHelperPair>();
 
@@ -241,7 +271,8 @@ namespace logic.FiniteAutomataService.Models
                     var newInitialState = new State(++statesIdCounter, "", true);
                     var newFinalState = new State(++statesIdCounter, "", false, true);
 
-                    newInitialState.Directions.Add(newFinalState, new HashSet<ILetter>() { newLetter });
+                    newInitialState.Directions.Add(newFinalState, 
+                        new HashSet<DirectionValue>() { new DirectionValue { Letter = newLetter } });
 
                     this.States.Add(newInitialState);
                     this.States.Add(newFinalState);
@@ -277,49 +308,49 @@ namespace logic.FiniteAutomataService.Models
             while (queue.Count > 0)
             {
                 var currentState = queue.Dequeue();
-                var statesBuilder = new Dictionary<ILetter, HashSet<IState>>();
+                var statesBuilder = new Dictionary<DirectionValue, HashSet<IState>>();
 
                 foreach (var state in newBuildedStates[currentState])
                 {
                     foreach (var direction in state.Directions)
                     {
                         var currentClosures = direction.Key.FindEpsilonClosures();
-                        foreach (var letter in direction.Value)
+                        foreach (var value in direction.Value)
                         {
-                            if (letter.IsEpsilon)
+                            if (value.Letter.IsEpsilon)
                             {
                                 continue;
                             }
-                            if (statesBuilder.ContainsKey(letter))
+                            if (statesBuilder.ContainsKey(value))
                             {
                                 foreach (var s in currentClosures)
                                 {
-                                    statesBuilder[letter].Add(s);
+                                    statesBuilder[value].Add(s);
                                 }
                             }
                             else
                             {
-                                statesBuilder.Add(letter, new HashSet<IState>(currentClosures));
+                                statesBuilder.Add(value, new HashSet<IState>(currentClosures));
                             }
                         }
                     }
                 }
 
-                foreach (var letter in statesBuilder.Keys)
+                foreach (var value in statesBuilder.Keys)
                 {
-                    var state = statesBuilder[letter].BuildNewState();
+                    var state = statesBuilder[value].BuildNewState();
                     if (!newBuildedStates.ContainsKey(state))
                     {
                         queue.Enqueue(state);
-                        newBuildedStates.Add(state, statesBuilder[letter]);
+                        newBuildedStates.Add(state, statesBuilder[value]);
                     }
                     if (currentState.Directions.ContainsKey(state))
                     {
-                        currentState.Directions[state].Add(letter);
+                        currentState.Directions[state].Add(value);
                     }
                     else
                     {
-                        currentState.Directions.Add(state, new HashSet<ILetter>() { letter });
+                        currentState.Directions.Add(state, new HashSet<DirectionValue>() { value });
                     }
                 }
                 foreach (var letter in this.StructureAlphabet.Letters)
@@ -328,16 +359,16 @@ namespace logic.FiniteAutomataService.Models
                     {
                         continue;
                     }
-                    if (!statesBuilder.ContainsKey(letter))
+                    if (!statesBuilder.ContainsKey(new DirectionValue { Letter = letter }))
                     {
                         if (currentState.Directions.ContainsKey(sink))
                         {
-                            currentState.Directions[sink].Add(letter);
+                            currentState.Directions[sink].Add(new DirectionValue { Letter = letter });
                         }
                         else
                         {
                             isSinkNeeded = true;
-                            currentState.Directions.Add(sink, new HashSet<ILetter>() { letter });
+                            currentState.Directions.Add(sink, new HashSet<DirectionValue>() { new DirectionValue { Letter = letter } });
                         }
                     }
                 }
@@ -345,7 +376,6 @@ namespace logic.FiniteAutomataService.Models
             this.DFA = newBuildedStates.Keys.ToHashSet();
             if (isSinkNeeded)
             {
-                this.DFA.Add(sink);
                 foreach (var letter in this.StructureAlphabet.Letters)
                 {
                     if (letter.IsEpsilon)
@@ -354,13 +384,14 @@ namespace logic.FiniteAutomataService.Models
                     }
                     if (sink.Directions.ContainsKey(sink))
                     {
-                        sink.Directions[sink].Add(letter);
+                        sink.Directions[sink].Add(new DirectionValue { Letter = letter });
                     }
                     else
                     {
-                        sink.Directions.Add(sink, new HashSet<ILetter>() { letter });
+                        sink.Directions.Add(sink, new HashSet<DirectionValue>() { new DirectionValue { Letter = letter } });
                     }
                 }
+                this.DFA.Add(sink);
             }
         }
 
