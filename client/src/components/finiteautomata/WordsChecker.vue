@@ -122,7 +122,7 @@
             showCheckResult.value = true;
             checking.value = false;
           })
-          .catch(err => (checking.value = false));
+          .catch(() => (checking.value = false));
       }, 400);
 
       const setWord = (event: any) => {

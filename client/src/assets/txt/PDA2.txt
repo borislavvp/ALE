@@ -1,0 +1,28 @@
+alphabet: ah
+stack: x 
+states: 1,2
+final:  2 
+transitions: 
+1,a [_,x] --> 1
+1,h --> 2
+2,a [x,_] --> 2
+end.
+
+words: 
+h,y
+aha,y
+aahaa,y
+aaahaaa,y
+aaaahaaaa,y
+,n
+a,n
+aa,n
+ha,n
+ah,n
+ahaa,n
+aaha,n
+haaaaa,n
+aaaaah,n
+ahaaaa,n
+aaaaha,n
+end.

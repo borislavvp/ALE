@@ -82,6 +82,7 @@ export const withFiniteAutomataProvider = () => {
         })
     }
     const evaluateTests = (tests: string) => {
+        console.log(tests)
         evaluation.Testing = true;
         return new Promise<void>((resolve, reject) => {
             finiteAutomataService.evaluateTestCases(tests)
@@ -94,7 +95,7 @@ export const withFiniteAutomataProvider = () => {
                         evaluation.Testing = false;
                         resolve();
                     }, 500)
-                }).catch(err => {
+                }).catch(() => {
                     evaluation.Testing = false;
                     reject();
                 })
@@ -123,7 +124,7 @@ export const withFiniteAutomataProvider = () => {
    
     return {
         evaluation: computed(() => evaluation),
-        canEvaluateInstructions: computed(() => evaluation.GraphVisible !== "DFA" && !evaluation.RegexMode),
+        canEvaluateInstructions: computed(() => evaluation.GraphVisible !== "DFA"),
         showDFA,
         showOriginal,
         evaluate,

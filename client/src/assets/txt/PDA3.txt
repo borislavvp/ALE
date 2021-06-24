@@ -1,0 +1,35 @@
+alphabet: ab
+stack: x
+states: 1,2,3,4
+final: 4
+transitions:
+1,a [_,x] --> 1
+1,b [x,_] --> 2
+2,b [x,_] --> 3
+3,b [x,_] --> 4
+end.
+
+words:
+aaabbb,y
+
+ab,n
+aab,n
+aaab,n
+abb,n
+aabb,n
+aaabb,n
+abbb,n
+aabbb,n
+aaaaaabbbbbb,n
+
+,n
+a,n
+aa,n
+aaa,n
+aaaaaa,n
+
+b,n
+bb,n
+bbb,n
+bbbbbb,n
+end.

@@ -58,5 +58,42 @@ export const predefinedInstructions = [
         // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
         //@ts-ignore
         src: () => import("@/assets/txt/FiniteRegex.txt")
-    }
+    },
+    {
+        title: "PDA 0",
+        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        //@ts-ignore
+        src: () => import("@/assets/txt/PDA0.txt")
+    },
+    {
+        title: "PDA 1",
+        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        //@ts-ignore
+        src: () => import("@/assets/txt/PDA1.txt")
+    },
+    {
+        title: "PDA 2",
+        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        //@ts-ignore
+        src: () => import("@/assets/txt/PDA2.txt")
+    },
+    {
+        title: "PDA 3",
+        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        //@ts-ignore
+        src: () => import("@/assets/txt/PDA3.txt")
+    },
+    {
+        title: "PDA 4",
+        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        //@ts-ignore
+        src: () => import("@/assets/txt/PDA4.txt")
+    },
+    {
+        title: "PDA 5",
+        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        //@ts-ignore
+        src: () => import("@/assets/txt/PDA5.txt")
+    },
+    
 ]

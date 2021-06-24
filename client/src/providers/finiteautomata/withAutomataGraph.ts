@@ -30,9 +30,10 @@ export const withAutomataGraph = () => {
         : `label="${s.Value}"`} ${s.Final ? 'fontcolor=goldenrod3 shape=doublecircle color=goldenrod2'
                                           : s.Initial ? 'color=indigo fontcolor=indigo'
                                             : 'color=gray25 fontcolor=gray10'}]`)
-    
     const edges = data.Transitions.map(t => 
-      `"${t.From.Id}" -> "${t.To.Id}" [label="${t.Value.Value}" ${t.From.Id === t.To.Id ? 'color=dodgerblue2' : 'color=gray24'}]`);
+      `"${t.From.Id}" -> "${t.To.Id}" 
+      [label="${t.Value.Letter.Value}${t.Value.LetterToPop !== null && t.Value.LetterToPush !== null ? ", " + t.Value.LetterToPop.Value + ' → '+ t.Value.LetterToPush.Value : '' }" 
+      ${t.From.Id === t.To.Id ? 'color=dodgerblue2' : 'color=gray24'}]`);
     
     const graph = `digraph "Graph" {
           rankdir=LR;

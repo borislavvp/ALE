@@ -126,12 +126,14 @@
                 ? parsed[0].replaceAll("\r", "")
                 : parsed[0]
               : "";
+
           const tests =
             parsed.length > 1
               ? parsed[1].includes("\r")
                 ? parsed[1].replaceAll("\r", "")
                 : parsed[1]
               : "";
+
           evaluateInstructions(instructions, tests);
         }
       });
