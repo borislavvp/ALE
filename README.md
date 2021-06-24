@@ -17,7 +17,7 @@ The following logical operators are supported:
 
 ## ALE 2
 **The project is about an application which can evaluate instructions in predefined format and regex expressions utilizing tompson processing algorithm and others. Building and visualizing multi directed finite automata graphs and verifying whether a word can be formed or whether the automata is finite with giving all possible words. Furthermore, automatas can be converted into DFAs if they are not already.**
-![image](![image](https://user-images.githubusercontent.com/46525030/123305276-9a5b1280-d528-11eb-8df2-518a7a6a9d1b.png))
+![image](https://user-images.githubusercontent.com/46525030/123305276-9a5b1280-d528-11eb-8df2-518a7a6a9d1b.png)
 
 The following instructions are needed in order a valid automata to be build:
 * alphabet
