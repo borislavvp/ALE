@@ -4,11 +4,22 @@
       v-if="IsTesting"
       class="w-6 h-6 fill-current animate-spin text-gray-600"
     />
-    <icon-check
-      v-if="IsFinite && !IsTesting"
-      class="w-6 h-6 fill-current text-green-600"
-    />
-    <icon-x v-if="!IsFinite && !IsTesting" class="w-6 h-6" />
+    <div v-else class="mr-6">
+      <icon-check
+        v-if="IsFiniteAnswer || IsFiniteAnswer !== IsFiniteGuess"
+        class="w-6 absolute -mt-3 h-6 z-10 fill-current text-green-600"
+        :class="{
+          'z-0 opacity-75': IsFiniteAnswer !== IsFiniteGuess && !IsFiniteAnswer
+        }"
+      />
+      <icon-x
+        v-if="!IsFiniteAnswer || IsFiniteAnswer !== IsFiniteGuess"
+        class="w-6 absolute -mt-3 h-6 z-10"
+        :class="{
+          'z-0 opacity-50': IsFiniteAnswer !== IsFiniteGuess && IsFiniteAnswer
+        }"
+      />
+    </div>
     <span class="mx-2 font-semibold text-gray-800 text-base">Finite</span>
   </div>
 </template>
@@ -34,7 +45,10 @@
             automataProvider.evaluation.value.Testing ||
             automataProvider.evaluation.value.Processing
         ),
-        IsFinite: computed(
+        IsFiniteGuess: computed(
+          () => automataProvider.evaluation.value.Tests.IsFinite.TestGuess
+        ),
+        IsFiniteAnswer: computed(
           () => automataProvider.evaluation.value.Tests.IsFinite.Answer
         )
       };

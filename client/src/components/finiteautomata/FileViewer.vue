@@ -95,6 +95,10 @@
         () => automataProvider.evaluation.value.OriginalInstructions
       );
 
+      const evaluateTests = debounce((tests: string) => {
+        automataProvider.evaluateTests(tests).catch(err => console.log(err));
+      }, 400);
+
       const evaluateInstructions = debounce(
         (instructions: string, tests: string) => {
           const graphProvider = withAutomataGraph();
@@ -104,7 +108,7 @@
             .then(() =>
               graphProvider.showGraph(automataProvider.evaluation.value.Original)
             )
-            .then(() => automataProvider.evaluateTests(tests))
+            .then(() => evaluateTests(tests))
             .catch(err => console.log(err));
         },
         400
@@ -133,8 +137,11 @@
                 ? parsed[1].replaceAll("\r", "")
                 : parsed[1]
               : "";
-
-          evaluateInstructions(instructions, tests);
+          if (automataProvider.RegexMode.value) {
+            evaluateTests(tests);
+          } else {
+            evaluateInstructions(instructions, tests);
+          }
         }
       });
 

@@ -69,7 +69,6 @@
     computed,
     ref
   } from "@vue/composition-api";
-  import { EsModuleComponent } from "vue/types/options";
   import { withFiniteAutomataProvider } from "@/providers/finiteautomata/withFiniteAutomataProvider";
   import { withAutomataGraph } from "@/providers/finiteautomata/withAutomataGraph";
   import debounce from "@/providers/finiteautomata/utils/debounce";
@@ -87,7 +86,7 @@
           i => i.title === instructionTitle
         )?.src;
         getFileContent?.()
-          .then((content: EsModuleComponent) => {
+          .then((content: any) => {
             const blob = new Blob([content.default as string], {
               type: "text/plain"
             });
