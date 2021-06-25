@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace logic.FiniteAutomataService.Models
 {
-    public class FiniteAutomataStructure : IFiniteAutomataStructure
+    public class AutomataStructure : IAutomataStructure
     {
         public HashSet<IState> DFA { get; set; }
         public string DFAInstructions { get; set; }
@@ -27,13 +27,13 @@ namespace logic.FiniteAutomataService.Models
         public bool IsFinite { get => this.CheckFinite(); }
         public HashSet<ILetter> Stack { get; set; }
 
-        public FiniteAutomataStructure()
+        public AutomataStructure()
         {
             this.StructureAlphabet = new Alphabet();
             this.States = new HashSet<IState>();
             this.Stack = new HashSet<ILetter>();
         }
-        public FiniteAutomataStructure(InstructionsInput input)
+        public AutomataStructure(InstructionsInput input)
         {
             if (input.instructions.Contains("regex")) {
                 this.StructureAlphabet = new Alphabet();

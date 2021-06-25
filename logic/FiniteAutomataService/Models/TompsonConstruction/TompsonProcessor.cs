@@ -20,7 +20,7 @@ namespace logic.FiniteAutomataService.Models.TompsonConstruction
         public static TompsonInitialFinalStatesHelperPair ProcessRule(
             char rule, 
             Stack<TompsonInitialFinalStatesHelperPair> processedValues,
-            IFiniteAutomataStructure structure,
+            IAutomataStructure structure,
             ref int latestId)
         {
             switch (rule)
@@ -38,7 +38,7 @@ namespace logic.FiniteAutomataService.Models.TompsonConstruction
 
         private static TompsonInitialFinalStatesHelperPair ProcessRepetitionRule(
             Stack<TompsonInitialFinalStatesHelperPair> processedValues,
-            IFiniteAutomataStructure structure,
+            IAutomataStructure structure,
             ref int latestId)
         {
             var pairToProcess = processedValues.Pop();
@@ -73,7 +73,7 @@ namespace logic.FiniteAutomataService.Models.TompsonConstruction
         } 
         private static TompsonInitialFinalStatesHelperPair ProcessConcatenationRule(
             Stack<TompsonInitialFinalStatesHelperPair> processedValues,
-            IFiniteAutomataStructure structure,
+            IAutomataStructure structure,
             ref int latestId)
         {
             var pairToConcatFrom = processedValues.Pop();
@@ -110,7 +110,7 @@ namespace logic.FiniteAutomataService.Models.TompsonConstruction
         
         private static TompsonInitialFinalStatesHelperPair ProcessChoiceRule(
             Stack<TompsonInitialFinalStatesHelperPair> processedValues,
-            IFiniteAutomataStructure structure,
+            IAutomataStructure structure,
             ref int latestId)
         {
             var pair1 = processedValues.Pop();

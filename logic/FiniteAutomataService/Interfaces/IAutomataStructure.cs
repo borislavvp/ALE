@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace logic.FiniteAutomataService.Interfaces
 {
-    public interface IFiniteAutomataStructure
+    public interface IAutomataStructure
     {
         HashSet<IState> DFA { get; set; }
         string DFAInstructions { get; set; }

@@ -17,8 +17,8 @@ namespace server.Controllers
     public class FiniteAutomataController : Controller
     {
         IConfiguration configuration;
-        private IFiniteAutomataService _service;
-        public FiniteAutomataController(IConfiguration configuration, IFiniteAutomataService service)
+        private IAutomataService _service;
+        public FiniteAutomataController(IConfiguration configuration, IAutomataService service)
         {
             this._service = service;
             this.configuration = configuration;
@@ -26,7 +26,7 @@ namespace server.Controllers
 
         [HttpPost]
         [Route("evaluate")]
-        public ActionResult<FiniteAutomataEvaluationDTO> EvaluateInstructions([FromBody] InstructionsInput input)
+        public ActionResult<AutomataEvaluationDTO> EvaluateInstructions([FromBody] InstructionsInput input)
         {
             try
             {

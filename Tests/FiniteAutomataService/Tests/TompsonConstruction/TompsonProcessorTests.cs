@@ -46,7 +46,7 @@ namespace Tests.FiniteAutomataService.Tests.Models
         [Test]
         public void Should_Process_Repetition_Rule_Successfully()
         {
-            IFiniteAutomataStructure str = new FiniteAutomataStructure();
+            IAutomataStructure str = new AutomataStructure();
             int statesId = 1;
             IState initial = new State(statesId++, "1",true);
             IState state2 = new State(statesId, "2");
@@ -72,7 +72,7 @@ namespace Tests.FiniteAutomataService.Tests.Models
         [Test]
         public void Should_Process_Concatenation_Rule_Successfully()
         {
-            IFiniteAutomataStructure str = new FiniteAutomataStructure();
+            IAutomataStructure str = new AutomataStructure();
             int statesId = 1;
             IState initial = new State(statesId++, "1",true);
             IState state2 = new State(statesId++, "2");
@@ -113,7 +113,7 @@ namespace Tests.FiniteAutomataService.Tests.Models
         [Test]
         public void Should_Process_Choice_Rule_Successfully()
         {
-            IFiniteAutomataStructure str = new FiniteAutomataStructure();
+            IAutomataStructure str = new AutomataStructure();
             int statesId = 1;
             IState initial = new State(statesId++, "1",true);
             IState state2 = new State(statesId++, "2");

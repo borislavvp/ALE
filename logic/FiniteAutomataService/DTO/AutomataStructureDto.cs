@@ -7,12 +7,12 @@ using System.Text;
 
 namespace logic.FiniteAutomataService.DTO
 {
-    public class FiniteAutomataStructureDto
+    public class AutomataStructureDto
     {
         public HashSet<StateDTO> States { get; set; }
         public HashSet<TransitionDTO> Transitions { get; set; }
 
-        public FiniteAutomataStructureDto(HashSet<IState> states)
+        public AutomataStructureDto(HashSet<IState> states)
         {
             this.Transitions = new HashSet<TransitionDTO>();
             this.States = new HashSet<StateDTO>();

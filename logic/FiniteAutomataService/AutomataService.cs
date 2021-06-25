@@ -10,20 +10,20 @@ using Microsoft.Extensions.Configuration;
 
 namespace logic.FiniteAutomataService
 {
-    public class FiniteAutomataService : IFiniteAutomataService
+    public class AutomataService : IAutomataService
     {
-        public IFiniteAutomataStructure structure { get; set; }
+        public IAutomataStructure structure { get; set; }
 
-        public FiniteAutomataEvaluationDTO EvaluateFromInstructions(IConfiguration configuration,InstructionsInput input)
+        public AutomataEvaluationDTO EvaluateFromInstructions(IConfiguration configuration,InstructionsInput input)
         {
-            this.structure = new FiniteAutomataStructure(input);
+            this.structure = new AutomataStructure(input);
             this.structure.GenerateOriginalInstructions(configuration);
             if (!structure.IsDFA)
             {
                 structure.BuildDFA();
                 structure.GenerateDFAInstructions(configuration);
             }
-            return new FiniteAutomataEvaluationDTO(this.structure);
+            return new AutomataEvaluationDTO(this.structure);
         }
         
         public TestsEvaluationResult EvaluateTestCases(TestsInput input)

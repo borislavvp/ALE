@@ -49,7 +49,7 @@ namespace Tests.FiniteAutomataService.Tests.Models
         [Test]
         public void Should_Return_The_First_Initial_State_Successfully()
         {
-            IFiniteAutomataStructure str = new FiniteAutomataStructure();
+            IAutomataStructure str = new AutomataStructure();
             IState initial = new State(1, "1", true);
             str.States.Add(initial);
             str.States.Add(new State(2, "2", true));
@@ -60,7 +60,7 @@ namespace Tests.FiniteAutomataService.Tests.Models
         [Test]
         public void Should_Return_All_Final_States_Successfully()
         {
-            IFiniteAutomataStructure str = new FiniteAutomataStructure();
+            IAutomataStructure str = new AutomataStructure();
             IState final1 = new State(1, "1", true,true);
             IState final2 = new State(2, "2", false,true);
             str.States.Add(final1);
@@ -72,7 +72,7 @@ namespace Tests.FiniteAutomataService.Tests.Models
         [Test]
         public void Should_Return_That_Structure_Is_Not_DFA_If_Contains_Epsilon()
         {
-            IFiniteAutomataStructure str = new FiniteAutomataStructure();
+            IAutomataStructure str = new AutomataStructure();
             str.StructureAlphabet.Letters.Add(Alphabet.EPSILON_LETTER);
 
             Assert.IsFalse(str.IsDFA);
@@ -81,7 +81,7 @@ namespace Tests.FiniteAutomataService.Tests.Models
         [Test]
         public void Should_Return_That_Structure_Is_Not_DFA_If_There_Are_Directions_That_Dont_Include_All_Letters()
         {
-            IFiniteAutomataStructure str = new FiniteAutomataStructure();
+            IAutomataStructure str = new AutomataStructure();
             ILetter letter = new Letter('s');
             IState state1 = new State(1, "1", true, true);
             IState state2 = new State(2, "2", false, true);
@@ -97,7 +97,7 @@ namespace Tests.FiniteAutomataService.Tests.Models
         [Test]
         public void Should_Return_That_Structure_Is_DFA_If_There_Are_Directions_That_Include_All_Letters()
         {
-            IFiniteAutomataStructure str = new FiniteAutomataStructure();
+            IAutomataStructure str = new AutomataStructure();
             ILetter letter = new Letter('s');
             IState state1 = new State(1, "1", true, true);
             IState state2 = new State(2, "2", false, true);
@@ -114,7 +114,7 @@ namespace Tests.FiniteAutomataService.Tests.Models
         [Test]
         public void Should_Return_That_Structure_Is_Not_Finite_If_There_Are_Self_Referenced_States_That_Reach_Final_State()
         {
-            IFiniteAutomataStructure str = new FiniteAutomataStructure();
+            IAutomataStructure str = new AutomataStructure();
             IState state1 = new State(1, "1", true, true);
             state1.Directions.Add(state1, new HashSet<DirectionValue>() { new DirectionValue { Letter = new Letter('s') } });
 
@@ -126,7 +126,7 @@ namespace Tests.FiniteAutomataService.Tests.Models
         [Test]
         public void Should_Return_That_Structure_Is_Not_Finite_If_There_Are_States_In_A_Loop_With_Letters()
         {
-            IFiniteAutomataStructure str = new FiniteAutomataStructure();
+            IAutomataStructure str = new AutomataStructure();
             IState initial = new State(1, "1", true);
             IState state2 = new State(2, "2", true);
             IState state3 = new State(3, "3", true);
@@ -144,7 +144,7 @@ namespace Tests.FiniteAutomataService.Tests.Models
         [Test]
         public void Should_Return_That_Structure_Is_Finite_If_There_Are_States_In_A_Loop_With_Epsilon_Letters()
         {
-            IFiniteAutomataStructure str = new FiniteAutomataStructure();
+            IAutomataStructure str = new AutomataStructure();
             IState initial = new State(1, "1", true);
             IState state2 = new State(2, "2", true);
             IState state3 = new State(3, "3", true);
@@ -162,7 +162,7 @@ namespace Tests.FiniteAutomataService.Tests.Models
         [Test]
         public void Should_Generate_DFA_Instructions_For_Non_DFA_Structure_And_Verfiy_That_It_Is_DFA_After_Evaluation()
         {
-            IFiniteAutomataStructure str = new FiniteAutomataStructure();
+            IAutomataStructure str = new AutomataStructure();
             ILetter letter = new Letter('s');
             str.StructureAlphabet.Letters.Add(letter);
             IState initial = new State(1, "1", true);
@@ -178,7 +178,7 @@ namespace Tests.FiniteAutomataService.Tests.Models
             str.States.Add(final);
 
             str.GenerateDFAInstructions(new Mock<IConfiguration>().Object);
-            IFiniteAutomataStructure DFA = new FiniteAutomataStructure(
+            IAutomataStructure DFA = new AutomataStructure(
                                                     new InstructionsInput { instructions = str.DFAInstructions });
 
             Assert.IsTrue(DFA.IsDFA);
@@ -187,7 +187,7 @@ namespace Tests.FiniteAutomataService.Tests.Models
         [Test]
         public void Should_Generate_Instructions_Successfully()
         {
-            IFiniteAutomataStructure str = new FiniteAutomataStructure();
+            IAutomataStructure str = new AutomataStructure();
             ILetter letter = new Letter('s');
             str.StructureAlphabet.Letters.Add(letter);
 
@@ -200,7 +200,7 @@ namespace Tests.FiniteAutomataService.Tests.Models
             str.States.Add(final);
 
             str.GenerateOriginalInstructions(new Mock<IConfiguration>().Object);
-            IFiniteAutomataStructure newStr = new FiniteAutomataStructure(
+            IAutomataStructure newStr = new AutomataStructure(
                                                     new InstructionsInput { instructions = str.OriginalInstructions });
 
             Assert.AreEqual(newStr.States,str.States);
@@ -209,7 +209,7 @@ namespace Tests.FiniteAutomataService.Tests.Models
         public void WordExists_Should_Call_Initial_State_Method_For_Checking_Word_Successfully()
         {
             string wordToCheck = "s";
-            IFiniteAutomataStructure str = new FiniteAutomataStructure();
+            IAutomataStructure str = new AutomataStructure();
             Mock<IState> initial = new Mock<IState>();
             initial.Setup(s => s.Initial).Returns(true);
 
@@ -223,7 +223,7 @@ namespace Tests.FiniteAutomataService.Tests.Models
         [TestCaseSource(nameof(REGEX_LETTERS_DFA_FINITE))]
         public void Should_Build_Structure_From_Regex_AnD_Verify_Alphabet_DFA_And_Finite(string regex,int letters,bool dfa, bool finite)
         {
-            IFiniteAutomataStructure str = new FiniteAutomataStructure(
+            IAutomataStructure str = new AutomataStructure(
                                             new InstructionsInput { instructions = "regex: " + regex + "\n"});
 
             Assert.AreEqual(str.StructureAlphabet.Letters.Count, letters);
@@ -235,7 +235,7 @@ namespace Tests.FiniteAutomataService.Tests.Models
         [TestCaseSource(nameof(NON_DFA_REGEX))]
         public void Should_Build_Structure_From_Regex_And_Build_DFA(string regex)
         {
-            IFiniteAutomataStructure str = new FiniteAutomataStructure(
+            IAutomataStructure str = new AutomataStructure(
                                             new InstructionsInput { instructions = "regex: " + regex + "\n"});
 
             str.BuildDFA();

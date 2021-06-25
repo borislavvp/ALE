@@ -5,17 +5,17 @@ using System.Text;
 
 namespace logic.FiniteAutomataService.DTO
 {
-    public class FiniteAutomataEvaluationDTO
+    public class AutomataEvaluationDTO
     {
         public string DFAInstructions { get; set; }
         public string OriginalInstructions { get; set; }
-        public FiniteAutomataStructureDto DFA { get; set; }
-        public FiniteAutomataStructureDto Original { get; set; }
+        public AutomataStructureDto DFA { get; set; }
+        public AutomataStructureDto Original { get; set; }
 
-        public FiniteAutomataEvaluationDTO(IFiniteAutomataStructure structure)
+        public AutomataEvaluationDTO(IAutomataStructure structure)
         {
-            this.DFA = structure.IsDFA ? null : new FiniteAutomataStructureDto(structure.DFA);
-            this.Original = new FiniteAutomataStructureDto(structure.States);
+            this.DFA = structure.IsDFA ? null : new AutomataStructureDto(structure.DFA);
+            this.Original = new AutomataStructureDto(structure.States);
             this.DFAInstructions = structure.DFAInstructions;
             this.OriginalInstructions = structure.OriginalInstructions;
         }

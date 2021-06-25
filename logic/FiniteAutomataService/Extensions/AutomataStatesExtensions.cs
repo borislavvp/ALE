@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 
 namespace logic.FiniteAutomataService.Extensions
 {
-    public static class FiniteAutomataStatesExtensions
+    public static class AutomataStatesExtensions
     {
         public static HashSet<IState> MarkFinalStates(this HashSet<IState> states, InstructionsInput input)
         {
@@ -115,7 +115,7 @@ namespace logic.FiniteAutomataService.Extensions
                 }
                 if (statesTracker.Contains(direction.Key))
                 {
-                    if (!direction.Value.Contains(new DirectionValue { Letter = Alphabet.EPSILON_LETTER }))
+                    if (direction.Value.Where(d => !d.Letter.IsEpsilon).Count() > 0)
                     {
                         statesInALoop.Add(direction.Key);
                         break;

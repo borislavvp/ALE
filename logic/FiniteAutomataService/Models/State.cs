@@ -171,9 +171,9 @@ namespace logic.FiniteAutomataService.Models
         private bool CheckWordWithDirections(Dictionary<WordCheckerTransitionKey, HashSet<IState>> tracker,
            Stack<ILetter> stack, IState state, string word, int fromLetter)
         {
+            var currentTransition = new WordCheckerTransitionKey(state, fromLetter);
             foreach (var direction in state.Directions)
             {
-                var currentTransition = new WordCheckerTransitionKey(state, fromLetter);
                 if( 
                     (!tracker.ContainsKey(currentTransition) ||
                     !tracker[currentTransition].Contains(direction.Key))
