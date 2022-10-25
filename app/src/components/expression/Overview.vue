@@ -31,20 +31,20 @@
     <div class="flex justify-between mb-10">
       <span class="text-gray-800 font-semibold text-lg mr-4">Nandify:</span>
       <span class="text-green-600 font-semibold text-lg">{{
-        EvalutionData.Nandify
+        nandifyData
       }}</span>
     </div>
     <div class="flex justify-between ">
       <span class="text-gray-800 font-semibold text-lg mr-4">DNF:</span>
       <span class="text-green-600 font-semibold text-lg">{{
-        EvalutionData.DNF
+        dnfData
       }}</span>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import { ExpressionEvaluation } from "@/types/expression/ExpressionEvaluation";
 
 export default defineComponent({
@@ -52,6 +52,25 @@ export default defineComponent({
     EvalutionData: {
       type: Object as () => ExpressionEvaluation,
       required: true
+    }
+  },
+  setup(props){
+
+    const nandifyData = computed(
+      () => props.EvalutionData.Nandify.length > 500 
+      ? props.EvalutionData.Nandify.substring(0,500) + "..." 
+      : props.EvalutionData.Nandify
+    )
+    
+    const dnfData = computed(
+      () => props.EvalutionData.DNF.length > 500 
+      ? props.EvalutionData.DNF.substring(0,500) + "..." 
+      : props.EvalutionData.DNF
+    )
+
+    return {
+      nandifyData,
+      dnfData
     }
   }
 });

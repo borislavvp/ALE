@@ -1,9 +1,12 @@
 <template>
   <div class="flex flex-row relative h-screen overflow-hidden p-8">
-    <div class="flex flex-col justify-between h-full w-1/4 ">
-      <div class="flex flex-col h-full ">
+      
+      <div class="flex flex-col items-center h-full w-1/4">
+        <div class="flex mb-5 justify-center rounded-xl text-center w-full shadow-lg">
+          <router-link to="/automata" class="p-2 font-semibold text-gray-600 hover:text-blue-500">Finite State Automata Evaluation</router-link> 
+        </div>
         <div
-          class="w-full rounded-xl border border-gray-300 mx-6 justify-content-center flex flex-col items-center py-3 px-2"
+          class="w-full rounded-xl border border-gray-300 mx-6 justify-between flex flex-col items-center py-3 px-2"
         >
           <div
             @click="SeeOverview"
@@ -12,7 +15,7 @@
                 ? 'bg-green-600 hover:bg-green-700 border border-green-500 text-white rounded-md shadow-xl'
                 : 'text-gray-800 hover:bg-gray-200'
             ]"
-            class="cursor-pointer rounded-md font-semibold w-full flex justify-between px-6 py-4 mb-2"
+            class="cursor-pointer rounded-md font-semibold w-full flex justify-between px-6 py-4"
           >
             <span class="flex items-center "
               ><svg
@@ -122,10 +125,6 @@
         </div>
 
       </div>
-      <div class="flex justify-center rounded-xl text-center bg-white shadow-lg">
-        <router-link to="/automata" class="p-2 font-semibold text-gray-600 hover:text-blue-500">Finite State Automata Evaluation</router-link> 
-      </div>
-    </div>
 
     <div class="w-3/4 ml-12 container flex h-full flex-col">
       <div class="flex items-center justify-between pb-4 px-8">
