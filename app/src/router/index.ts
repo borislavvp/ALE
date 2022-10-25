@@ -1,24 +1,21 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../views/Home.vue";
 
 const routes = [
   {
     path: "/",
     name: "Home",
-    component: Home
+    component: () => import("../views/Home.vue")
   },
   {
     path: "/logic",
     name: "ALE1",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/ExpressionView.vue")
+    component: () => import("../views/ExpressionView.vue")
   },
   {
     path: "/automata",
     name: "ALE2",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/FiniteAutomataView.vue")
-  }
+    component: () => import("../views/FiniteAutomataView.vue")
+  },
 ];
 
 export const router = createRouter({
@@ -26,3 +23,6 @@ export const router = createRouter({
   routes
 });
 
+router.beforeEach(guard => {
+  !guard.matched.length && router.push("/").catch({});
+})
