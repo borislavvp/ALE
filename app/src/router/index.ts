@@ -24,5 +24,5 @@ export const router = createRouter({
 });
 
 router.beforeEach(guard => {
-  !guard.matched.length && router.push("/").catch({});
+  !guard.matched.length && router.push("/").catch(()=>{});
 })

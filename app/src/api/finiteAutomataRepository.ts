@@ -2,10 +2,7 @@ import { FiniteAutomataEvaluation } from "@/types/finiteautomata/FiniteAutomataE
 import { TestCasesEvaluation } from "@/types/finiteautomata/TestCasesEvaluation";
 import axios from "axios";
 const instance = axios.create({
-  baseURL:
-    process.env.NODE_ENV === "development"
-      ? "http://localhost:44390"
-      : "https://ale-server.azurewebsites.net/"
+  baseURL: import.meta.env.VITE_API_URL
 });
 export const finiteAutomataService = {
   evaluateInstructions(instructions: string): Promise<FiniteAutomataEvaluation> {

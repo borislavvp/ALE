@@ -8,8 +8,10 @@ export interface TestCasesEvaluation {
         Answer:boolean
     },
     WordCheckerResults: {
-        TestGuess:boolean,
-        Answer: boolean,
+        Test:{
+            TestGuess:boolean,
+            Answer: boolean,
+        }
         Word:string
     }[],
     AllPossibleWords:string[]
