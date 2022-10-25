@@ -1,0 +1,12 @@
+alphabet: 
+stack: x
+states: 1,2,3
+final: 3
+transitions: 
+1,_ [_,x] --> 2
+2,_ [x,_] --> 3
+end.
+
+words: 
+,y
+end.

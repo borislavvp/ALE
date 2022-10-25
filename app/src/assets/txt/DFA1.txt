@@ -1,0 +1,57 @@
+alphabet: abcsdfgh
+stack: 
+states: q0,q1,q2,q3,q4,q5
+final: q4
+transitions: 
+q0,a --> q0
+q0,b --> q0
+q0,c --> q0
+q0,s --> q0
+q0,d --> q0
+q0,f --> q0
+q0,g --> q0
+q0,h --> q0
+q0,a --> q1
+q1,b --> q2
+q1,_ --> q3
+q3,b --> q4
+q4,c --> q5
+end.
+
+
+dfa: n
+finite: n
+
+words: 
+_,n
+a,n
+b,n
+aa,n
+ab,y
+ba,n
+bb,n
+aaa,n
+aab,y
+aba,n
+abb,n
+baa,n
+bab,y
+bba,n
+bbb,n
+aaaa,n
+aaab,y
+aaba,n
+aabb,n
+abaa,n
+abab,y
+abba,n
+abbb,n
+baaa,n
+baab,y
+baba,n
+babb,n
+bbaa,n
+bbab,y
+bbba,n
+bbbb,n
+end.

@@ -1,0 +1,23 @@
+alphabet: ab
+states: 0,1,2
+final: 2
+transitions: 
+0,_ --> 1
+0,_ --> 2
+1,a --> 1
+1,_ --> 2
+2,b --> 2
+end.
+
+
+dfa: n
+finite: n
+
+words: 
+,y
+aaa,y
+bbb,y
+aaabbb,y
+bbbaaa,n
+aaab,y
+end.

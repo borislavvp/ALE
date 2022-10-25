@@ -1,0 +1,13 @@
+regex: |(*(|(*(|(a,b)),c)),|(e,f))
+
+
+dfa: n
+finite: n
+
+words:
+,y
+e,y
+f,y
+a,y
+bbbb,y
+end.

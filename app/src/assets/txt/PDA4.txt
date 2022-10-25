@@ -1,0 +1,21 @@
+alphabet: ab
+stack: xy
+states: 1,2,3,4,5,6
+final: 6
+transitions: 
+1,a [_,x] --> 2
+2,b [_,y] --> 3
+3,_ [y,y] --> 4
+4,_ [y,_] --> 5
+5,_ [x,_] --> 6
+end.
+
+words: 
+ab,y
+,n
+a,n
+b,n
+aa,n
+bb,n
+ba,n
+end.
