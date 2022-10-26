@@ -1,4 +1,4 @@
-# ALE Fontys 
+# ALE - Automata & Logic Engineering
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/borislavvp/ALE/.NET) [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/0934dea52b734f63b4679540b426fc84)](https://www.codacy.com/gh/borislavvp/ALE/dashboard?utm_source=github.com&utm_medium=referral&utm_content=borislavvp/ALE&utm_campaign=Badge_Coverage) 
 
 This repository includes solution for two projects - ALE 1 and ALE 2. Below is given short information regarding both of them.
