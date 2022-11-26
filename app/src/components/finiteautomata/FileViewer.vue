@@ -86,6 +86,7 @@
     setup() {
       const automataProvider = withFiniteAutomataProvider();
       const fileManager = withFileManager();
+      const graphProvider = withAutomataGraph();
 
       const readFile = (event: any) => {
         fileManager
@@ -101,7 +102,6 @@
 
       const evaluateInstructions = debounce(
         (instructions: string, tests: string) => {
-          const graphProvider = withAutomataGraph();
           graphProvider.clearGraph();
           automataProvider
             .evaluate(instructions)

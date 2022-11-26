@@ -6,7 +6,7 @@ const instance = axios.create({
 });
 export const finiteAutomataService = {
   evaluateInstructions(instructions: string): Promise<FiniteAutomataEvaluation> {
-    return new Promise(resolve => {
+    return new Promise((resolve,reject) => {
       instance
         .post('/api/finiteautomata/evaluate',{instructions})
         .then(result => {
@@ -17,13 +17,12 @@ export const finiteAutomataService = {
           }
         })
         .catch(err => {
-          console.log(err);
-          resolve({} as FiniteAutomataEvaluation);
+          reject(err);
         });
     });
   },
   evaluateTestCases(value: string): Promise<TestCasesEvaluation> {
-    return new Promise(resolve => {
+    return new Promise((resolve,reject) => {
       instance
         .post('/api/finiteautomata/tests',{value})
         .then(result => {
@@ -34,13 +33,12 @@ export const finiteAutomataService = {
           }
         })
         .catch(err => {
-          console.log(err);
-          resolve({} as TestCasesEvaluation);
+          reject(err);
         });
     });
   },
   checkWord(word: string): Promise<boolean> {
-    return new Promise(resolve => {
+    return new Promise((resolve,reject) => {
       instance
         .post(`/api/finiteautomata/check?word=${word}`)
         .then(result => {
@@ -51,8 +49,7 @@ export const finiteAutomataService = {
           }
         })
         .catch(err => {
-          console.log(err);
-          resolve(false);
+          reject(err);
         });
     });
   }
