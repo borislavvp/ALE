@@ -6,7 +6,7 @@ import { predefinedInstructions } from "./utils/predefinedInstructions"
 import { withAutomataGraph } from "./withAutomataGraph"
 
 const evaluation: FiniteAutomataEvaluation = reactive({
-    Valid:false,
+    Valid:true,
     PredefinedInstructions: predefinedInstructions,
     CurrentInstructionName:predefinedInstructions[0].title,
     GraphVisible:"Original",
