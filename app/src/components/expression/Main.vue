@@ -1,12 +1,12 @@
 <template>
-  <div class="flex flex-row relative h-screen overflow-hidden p-8">
-      
-      <div class="flex flex-col items-center h-full w-1/4">
-        <div class="flex mb-5 justify-center rounded-xl text-center w-full shadow-lg">
-          <router-link to="/automata" class="p-2 font-semibold text-gray-600 hover:text-blue-500">Finite State Automata Evaluation</router-link> 
+  <div class="flex flex-row relative h-screen overflow-hidden p-10">
+      <div class="flex flex-col items-start h-full w-1/4">
+        <div class="mb-5 px-2 flex flex-col">
+          <span class="text-gray-600 font-bold">See also:</span>
+              <router-link to="/automata" class="p-2 font-semibold text-gray-600 hover:text-blue-500 underline">Finite State Automata Evaluation</router-link> 
         </div>
         <div
-          class="w-full rounded-xl border border-gray-300 mx-6 justify-between flex flex-col items-center py-3 px-2"
+          class="w-full rounded-xl border border-gray-300 justify-between flex flex-col items-center py-3 px-2"
         >
           <div
             @click="SeeOverview"
@@ -126,7 +126,7 @@
 
       </div>
 
-    <div class="w-3/4 ml-12 container flex h-full flex-col">
+    <div class="w-3/4 ml-10 container flex h-full flex-col">
       <div class="flex items-center justify-between pb-4 px-8">
         <input
           type="text"

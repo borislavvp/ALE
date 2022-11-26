@@ -1,8 +1,9 @@
 <template>
   <div class="w-64 flex h-full justify-between relative flex-col">
-    <div class="mb-5 flex justify-center rounded-xl text-center shadow-lg">
-        <router-link to="/logic" class="p-2 font-semibold text-gray-600 hover:text-green-600">Logic Propositions Evaluation</router-link> 
-      </div>
+    <div class="mb-5 px-2 flex flex-col">
+      <span class="text-gray-600 font-bold">See also:</span>
+      <router-link to="/logic" class="p-2 font-semibold text-gray-600 hover:text-green-600 underline">Logic Propositions Evaluation</router-link> 
+    </div>
     <instructions-selector
       @OnInstructionLoaded="readFile"
     ></instructions-selector>
