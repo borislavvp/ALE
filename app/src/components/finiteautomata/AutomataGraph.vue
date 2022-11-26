@@ -39,14 +39,14 @@
       DFAIndication
     },
     setup() {
+      const automataEvaluation = withFiniteAutomataProvider().evaluation;
+
       return {
         GraphName: computed(
-          () =>
-            withFiniteAutomataProvider().evaluation.value.CurrentInstructionName
+          () =>automataEvaluation.value.CurrentInstructionName
         ),
         IsDFA: computed(
-          () =>
-            withFiniteAutomataProvider().evaluation.value.GraphVisible === "DFA"
+          () =>automataEvaluation.value.GraphVisible === "DFA"
         )
       };
     }
