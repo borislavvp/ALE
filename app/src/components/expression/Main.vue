@@ -119,7 +119,7 @@
         </div>
         <div
           v-if="TruthTableVisible && shouldShowTableOptions"
-          class="w-full mt-12 rounded-xl border border-gray-300 mx-6 justify-content-center flex flex-col items-center py-3 px-2"
+          class="w-full mt-12 rounded-xl border border-gray-300 justify-content-center flex flex-col items-center py-3 px-2"
         >
           <truth-table-options />
         </div>
