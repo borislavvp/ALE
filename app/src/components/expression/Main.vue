@@ -136,7 +136,9 @@
         />
         <button
           @click="evaluateExpression"
-          class="relative hover:bg-gray-100 focus:outline-none focus:ring rounded shadow-lg px-4 py-2 bg-white text-green-700 font-semibold  uppercase text-white"
+          :disabled="IS_EVALUATING"
+          :class="[IS_EVALUATING ? 'cursor-default shadow-inner bg-gray-100' : 'focus:outline-none focus:ring cursor-pointer hover:bg-gray-100 bg-white shadow-lg']"
+          class="relative rounded px-4 py-2 text-green-700 font-semibold uppercase"
         >
           <span
             v-if="ShouldEvaluate"
