@@ -6,6 +6,7 @@ import { predefinedInstructions } from "./utils/predefinedInstructions"
 import { withAutomataGraph } from "./withAutomataGraph"
 
 const evaluation: FiniteAutomataEvaluation = reactive({
+    Valid:false,
     PredefinedInstructions: predefinedInstructions,
     CurrentInstructionName:predefinedInstructions[0].title,
     GraphVisible:"Original",
@@ -28,7 +29,7 @@ const evaluation: FiniteAutomataEvaluation = reactive({
         },
         WordCheckerResults: [],
         AllPossibleWords:[],
-    } as TestCasesEvaluation
+    }
 })
 export const withFiniteAutomataProvider = () => {
 
@@ -49,6 +50,7 @@ export const withFiniteAutomataProvider = () => {
         return new Promise<void>((resolve, reject) => {
             finiteAutomataService.evaluateInstructions(instructions)
                 .then(res => {
+                    evaluation.Valid = true;
                     evaluation.Original.States = res.Original.States;
                     evaluation.Original.Transitions = res.Original.Transitions
                     evaluation.DFA.States = res.DFA?.States || [];
@@ -63,7 +65,7 @@ export const withFiniteAutomataProvider = () => {
                         resolve();
                     }, 500)
                 }).catch(err => {
-                    evaluation.CurrentInstructions = "";
+                    evaluation.Valid = false;
                     evaluation.Processing = false;
                     reject(err);
                 })
@@ -78,7 +80,7 @@ export const withFiniteAutomataProvider = () => {
                         resolve(res);
                     }, 300)
                 }).catch(err => {
-                    reject();
+                    reject(err);
                 })
         })
     }
@@ -95,9 +97,9 @@ export const withFiniteAutomataProvider = () => {
                         evaluation.Testing = false;
                         resolve();
                     }, 500)
-                }).catch(() => {
+                }).catch((err) => {
                     evaluation.Testing = false;
-                    reject();
+                    reject(err);
                 })
         })
     }

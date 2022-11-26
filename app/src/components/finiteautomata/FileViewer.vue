@@ -12,9 +12,9 @@
       rows="3"
       :value="instructionsLoaded"
       @input="changeInstructions"
-      :class="{ 'text-indigo-600': IsDFAVisible }"
+      :class="[{ 'text-indigo-600': IsDFAVisible }, [  instructionsValid ? 'focus:bg-gray-200': 'border-2 border-red-500 bg-red-100' ]]"
       class="resize-none shadow-lg p-2 h-full flex-auto focus:outline-none text-gray-800 font-semibold focus:shadow-inner transition-default duration-500 
-      focus:bg-gray-200 overscroll-y-auto mt-1 w-full sm:text-sm rounded-md"
+     overscroll-y-auto mt-1 w-full sm:text-sm rounded-md"
       placeholder="Automata instructions"
     >
     </textarea>
@@ -152,6 +152,7 @@
           fileManager.downloadFile(
             automataProvider.evaluation.value.CurrentInstructions
           ),
+        instructionsValid: computed(() => automataProvider.evaluation.value.Valid),
         instructionsLoaded: computed(
           () => automataProvider.evaluation.value.CurrentInstructions
         ),
@@ -174,10 +175,12 @@
     -webkit-box-shadow: inset 0 0 6px rgba(221, 221, 221, 0.3);
     box-shadow: inset 0 0 6px rgba(209, 209, 209, 0.3);
     background-color: #ffffff;
+    border-radius: 0.200rem/* 6px */;
   }
 
   ::-webkit-scrollbar {
     width: 9px;
+    border-radius: 0.200rem/* 6px */; 
     background-color: #f5f5f5;
   }
 
@@ -185,6 +188,7 @@
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     background-color: rgb(168, 168, 168);
+    border-radius: 0.200rem/* 6px */;
   }
 
   /* Handle on hover */

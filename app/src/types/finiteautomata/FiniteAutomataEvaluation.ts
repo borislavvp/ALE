@@ -10,6 +10,7 @@ export interface GraphValues {
 export type GraphType = "DFA" | "Original";
 
 export interface FiniteAutomataEvaluation {
+  Valid:boolean,
   PredefinedInstructions: { title: string, src: () => Promise<any> }[],
   CurrentInstructionName:string,
   GraphVisible: GraphType
