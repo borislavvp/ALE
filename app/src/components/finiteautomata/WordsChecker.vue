@@ -132,17 +132,21 @@
           checkWord(wordToCheck.value);
         }
       };
-      const originalInstructions = computed(
-        () => automataProvider.evaluation.value.OriginalInstructions
+      const evaluationInProcess = computed(
+        () => automataProvider.evaluation.value.Processing
       );
 
-      watch(originalInstructions, () => {
-        if (
-          automataProvider.evaluation.value.GraphVisible !== "DFA" &&
-          wordToCheck.value
-        ) {
-          showCheckResult.value = false;
-          checkWord(wordToCheck.value);
+      watch(evaluationInProcess, (processing) => {
+        if(processing && wordToCheck.value){
+          const stop = watch(evaluationInProcess, (processing) => {
+            if(!processing){
+              showCheckResult.value = false;
+              checkWord(wordToCheck.value);
+              stop();
+            }
+          },{
+            immediate:true
+          })
         }
       });
 
